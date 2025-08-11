@@ -1,0 +1,487 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Poker Ledger ♠♥♦♣</title>
+<style>
+  :root{
+    --bg:#0b0d10; --card:rgba(18,22,28,.86); --muted:#9aa3b2; --text:#eef2f7;
+    --accent:#e11d48; --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444;
+    --border:rgba(255,255,255,.08); --gold:#ffcc66; --chip:#6fd3ff;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;color:var(--text);font:500 16px/1.4 system-ui,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+    /* Hintergrund: eingebettetes WebP + dunkles Overlay + dezentes Muster */
+    --bgimg:url('data:image/webp;base64,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');
+    background-image: linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.65)), var(--bgimg);
+    background-size: cover; background-position: center; background-attachment: fixed;
+  }
+  header{padding:16px 20px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);backdrop-filter:saturate(120%) blur(4px);background:linear-gradient( to bottom, rgba(0,0,0,.55), rgba(0,0,0,.35) );}
+  header h1{font-size:18px;margin:0;letter-spacing:.2px}
+  .pill{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;display:flex;gap:10px;align-items:center}
+  .pill label{font-size:13px;color:var(--muted)}
+  .pill input[type="number"], .pill select{width:110px}
+  input,button,select{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+  button{cursor:pointer}
+  button.accent{background:linear-gradient(180deg,#f43f5e,#b91c1c);border-color:transparent;color:white;box-shadow:0 6px 16px rgba(244,63,94,.25)}
+  button.ghost{background:transparent}
+  main{padding:20px;max-width:1200px;margin:0 auto}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:auto;box-shadow:0 12px 40px rgba(0,0,0,.35)}
+  table{width:100%;border-collapse:collapse;min-width:980px}
+  th,td{padding:12px 14px;border-bottom:1px solid var(--border);text-align:left;vertical-align:middle}
+  th{font-size:13px;color:var(--muted);font-weight:700;position:sticky;top:0;background:rgba(18,22,28,.92);z-index:1}
+  td input{width:100%;text-align:right}
+  td.name-cell input{text-align:left}
+  .right{text-align:right}
+  .muted{color:var(--muted)}
+  .green{color:var(--ok);font-variant-numeric:tabular-nums}
+  .red{color:var(--bad);font-variant-numeric:tabular-nums}
+  .warn{color:var(--warn)}
+  .chip{font-weight:700;color:var(--chip)}
+  tfoot td{background:rgba(255,255,255,.02)}
+  .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px}
+  .stat .k{font-size:12px;color:var(--muted)}
+  .stat .v{font-size:18px;font-weight:700;margin-top:4px}
+  .badge{padding:4px 8px;border-radius:999px;border:1px solid var(--border);font-size:12px;background:rgba(0,0,0,.2)}
+  .badge.ok{border-color:var(--ok);color:var(--ok)}
+  .badge.bad{border-color:var(--bad);color:var(--bad)}
+  .small{font-size:12px}
+  .row-actions{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+  .danger{background:transparent;border-color:var(--bad);color:var(--bad)}
+  .success{background:transparent;border-color:var(--ok);color:var(--ok)}
+  .role{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .role .who{font-weight:700}
+  .paid-flag{display:inline-flex;align-items:center;gap:6px}
+  .paid-flag input{width:auto}
+  .lock{opacity:.6;pointer-events:none}
+  .footer-note{margin-top:12px;color:var(--muted);font-size:13px;text-shadow:0 1px 0 rgba(0,0,0,.6)}
+  /* <<< WICHTIG: Breitere Netto-Spalten + kein Umbruch >>> */
+  td .nowrap{white-space:nowrap}
+  td .net-chips, td .net-money{display:inline-block;min-width:140px;text-align:right}
+  @media (max-width:980px){ .stats{grid-template-columns:repeat(2,1fr)} }
+</style>
+</head>
+<body>
+<header>
+  <h1>🃏 Poker Ledger <span style="color:var(--gold)">♠ ♥ ♦ ♣</span></h1>
+
+  <div class="pill">
+    <label for="buyin">Buy-in (Chips):</label>
+    <input id="buyin" type="number" min="1" step="1" value="100" />
+    <span class="muted small">Start + Rebuys</span>
+  </div>
+
+  <div class="pill">
+    <label>1 Chip =</label>
+    <input id="chipRate" type="number" min="0" step="0.01" value="1">
+    <select id="currency" style="width:80px">
+      <option value="€" selected>€</option>
+      <option value="$">$</option>
+      <option value="CHF">CHF</option>
+    </select>
+  </div>
+
+  <div class="pill role" style="gap:6px">
+    <span class="muted small">Rolle:</span>
+    <select id="roleSelect">
+      <option value="viewer">Viewer</option>
+      <option value="player">Spieler</option>
+      <option value="bank">Bank</option>
+      <option value="admin">Admin</option>
+    </select>
+
+    <!-- Player login -->
+    <input id="playerLoginName" placeholder="Name" style="display:none; width:150px">
+    <input id="playerLoginPass" type="password" placeholder="Passwort" style="display:none; width:150px">
+
+    <!-- Admin/Bank PIN -->
+    <input id="pinInput" type="password" placeholder="PIN" style="display:none; width:120px" />
+
+    <button id="loginBtn">Anmelden</button>
+    <button id="logoutBtn" class="ghost">Abmelden</button>
+    <span class="muted small">Aktuell: <span class="who" id="whoNow">Viewer</span></span>
+  </div>
+</header>
+
+<main>
+  <div class="controls">
+    <input id="playerName" placeholder="Spielername hinzufügen… (nur Admin)" />
+    <button class="accent" id="addPlayer">+ Spieler</button>
+    <button id="validate">Konsistenz prüfen</button>
+    <div class="spacer" style="flex:1"></div>
+    <button id="exportBtn" class="success">Export</button>
+    <button id="importBtn">Import</button>
+    <input id="importFile" type="file" accept="application/json" style="display:none">
+    <button id="resetBtn" class="danger">Alles löschen</button>
+  </div>
+
+  <div class="table-wrap">
+    <table id="ledger">
+      <thead>
+        <tr>
+          <th style="width:26px">#</th>
+          <th>Spieler</th>
+          <th class="right">Rebuys</th>
+          <th class="right">Buy-ins gesamt (Chips)</th>
+          <th class="right">Aktuelle Chips</th>
+          <th class="right">Netto (Chips)</th>
+          <th class="right">Netto (Geld)</th>
+          <th class="right">Zahlung</th>
+          <th class="right">Aktionen</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2"><span class="muted small">Summe</span></td>
+          <td class="right"><span id="sumRebuys" class="badge"></span></td>
+          <td class="right"><span id="sumBuyins" class="badge"></span></td>
+          <td class="right"><span id="sumChips" class="badge"></span></td>
+          <td class="right"><span id="sumNet" class="badge"></span></td>
+          <td class="right"><span id="sumNetMoney" class="badge"></span></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="k">Spieler</div><div class="v" id="statPlayers">0</div></div>
+    <div class="stat"><div class="k">Chips im Umlauf (soll)</div><div class="v chip" id="statChipsSoll">0</div></div>
+    <div class="stat"><div class="k">Chips erfasst (ist)</div><div class="v chip" id="statChipsIst">0</div></div>
+    <div class="stat"><div class="k">Abweichung</div><div class="v" id="statDiff">0</div></div>
+  </div>
+
+  <p class="footer-note">
+    Rollen & Rechte: Admin (volle Rechte), Bank (nur Auszahlungen/Einzahlungen bestätigen), Spieler (nur eigene Zeile).<br/>
+    Spieler-Login speichert Name + Passwort lokal (für Wiederkehrer). Netto (Geld) = Netto (Chips) × (1 Chip in €).
+  </p>
+</main>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+
+  // --- State ---
+  const state = {
+    buyinChips: 100,
+    chipRate: 1,
+    currency: "€",
+    players: [],          // {id,name,rebuys,chips,paid:{ok,by,at}, ph:passHash, createdAt}
+    role: { kind: 'viewer', playerId: null }, // viewer | player | bank | admin
+    pins: { admin: null, bank: null }
+  };
+
+  // --- Persistence ---
+  const save = () => localStorage.setItem('poker-ledger-roles', JSON.stringify(state));
+  const load = () => {
+    const raw = localStorage.getItem('poker-ledger-roles');
+    if (!raw) return;
+    try {
+      const s = JSON.parse(raw);
+      state.buyinChips = Number(s.buyinChips) || 100;
+      state.chipRate = Number(s.chipRate) >= 0 ? Number(s.chipRate) : 1;
+      state.currency = s.currency || "€";
+      state.players = Array.isArray(s.players) ? s.players : [];
+      state.role = s.role || {kind:'viewer', playerId:null};
+      state.pins = s.pins || {admin:null, bank:null};
+    } catch(e){ console.warn('Load error', e); }
+  };
+
+  // --- Helpers ---
+  const clampInt = (v, min=0) => Math.max(min, Math.floor(Number(v)||0));
+  const sum = arr => arr.reduce((a,b)=>a+b,0);
+  const fmtInt = n => (Number(n)||0).toLocaleString('de-DE', { maximumFractionDigits:0 });
+  const fmtMoney = n => {
+    const num = Number(n)||0;
+    const opts = { minimumFractionDigits:2, maximumFractionDigits:2 };
+    return `${num.toLocaleString('de-DE', opts)} ${state.currency}`;
+  };
+  const whoName = () => {
+    if (state.role.kind==='admin') return 'Admin';
+    if (state.role.kind==='bank') return 'Bank';
+    if (state.role.kind==='player') {
+      const p = getPlayerById(state.role.playerId);
+      return p? `Spieler: ${p.name||('ID '+p.id)}` : 'Spieler';
+    }
+    return 'Viewer';
+  };
+  const nextId = () => Math.max(0, ...state.players.map(p=>p.id||0)) + 1;
+  const sha256 = async (text) => {
+    if (window.crypto?.subtle) {
+      const enc = new TextEncoder().encode(text);
+      const buf = await crypto.subtle.digest('SHA-256', enc);
+      return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+    }
+    let h = 0; for (let i=0;i<text.length;i++){ h = (h<<5) - h + text.charCodeAt(i); h|=0; }
+    return 'x'+Math.abs(h);
+  };
+  const getPlayerById = (id) => state.players.find(p=>p.id===id);
+  const getPlayerByName = (name) => state.players.find(p=> (p.name||'').toLowerCase() === (name||'').toLowerCase());
+  const canEditGlobal = () => state.role.kind==='admin';
+  const canConfirmPayment = () => state.role.kind==='bank' || state.role.kind==='admin';
+  const canEditRow = (playerId) => state.role.kind==='admin' || (state.role.kind==='player' && state.role.playerId===playerId);
+
+  // --- UI refs ---
+  const buyinEl = $('buyin'), chipRateEl = $('chipRate'), currencyEl = $('currency');
+  const playerNameEl = $('playerName'); const addPlayerBtn = $('addPlayer'); const validateBtn = $('validate');
+  const exportBtn = $('exportBtn'); const importBtn = $('importBtn'); const importFile = $('importFile'); const resetBtn = $('resetBtn');
+  const rowsTbody = $('rows');
+  const roleSelect = $('roleSelect'); const pinInput = $('pinInput'); const playerLoginName = $('playerLoginName'); const playerLoginPass = $('playerLoginPass');
+  const loginBtn = $('loginBtn'); const logoutBtn = $('logoutBtn'); const whoNow = $('whoNow');
+
+  // --- Render header/stats (no focus loss) ---
+  function renderHeaderAndStats() {
+    buyinEl.value = state.buyinChips;
+    chipRateEl.value = state.chipRate;
+    currencyEl.value = state.currency;
+
+    const lockGlobal = !(state.role.kind==='admin');
+    [buyinEl, chipRateEl, currencyEl, playerNameEl, addPlayerBtn, resetBtn].forEach(el=>{
+      if (!el) return;
+      el.disabled = lockGlobal ? (el===validateBtn?false:true) : false;
+      el.classList.toggle('lock', lockGlobal && el!==validateBtn);
+    });
+
+    whoNow.textContent = whoName();
+
+    const role = roleSelect.value;
+    playerLoginName.style.display = role==='player' ? '' : 'none';
+    playerLoginPass.style.display = role==='player' ? '' : 'none';
+    pinInput.style.display = (role==='admin'||role==='bank') ? '' : 'none';
+
+    computeTotals();
+  }
+
+  function computeTotals() {
+    const totals = state.players.map(p=>{
+      const rebuys = clampInt(p.rebuys);
+      const buyinsTotal = (1 + rebuys) * state.buyinChips;
+      const chips = clampInt(p.chips,0);
+      const net = chips - buyinsTotal;
+      return {rebuys, buyinsTotal, chips, net};
+    });
+    const sumRebuys = sum(totals.map(t=>t.rebuys));
+    const sumBuyins = sum(totals.map(t=>t.buyinsTotal));
+    const sumChips = sum(totals.map(t=>t.chips));
+    const sumNet = sum(totals.map(t=>t.net));
+    const sumNetMoney = sumNet * state.chipRate;
+    const diff = sumChips - sumBuyins;
+
+    $('sumRebuys').textContent = `${sumRebuys}`;
+    $('sumBuyins').textContent = `${fmtInt(sumBuyins)} Chips`;
+    $('sumChips').textContent = `${fmtInt(sumChips)} Chips`;
+    $('sumNet').textContent = (sumNet>0?'+':'') + fmtInt(sumNet) + ' Chips';
+    $('sumNet').className = 'badge ' + (sumNet===0?'':(sumNet>0?'ok':'bad'));
+    $('sumNetMoney').textContent = (sumNetMoney>0?'+':'') + fmtMoney(sumNetMoney);
+
+    $('statPlayers').textContent = state.players.length;
+    $('statChipsSoll').textContent = fmtInt(sumBuyins);
+    $('statChipsIst').textContent = fmtInt(sumChips);
+    $('statDiff').textContent = (diff>0?'+':'') + fmtInt(diff);
+    $('sumBuyins').className = 'badge ' + (diff===0?'ok':'bad');
+    $('sumChips').className = 'badge ' + (diff===0?'ok':'bad');
+  }
+
+  function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
+
+  function rowHtml(p, idx) {
+    const rebuys = clampInt(p.rebuys);
+    const buyinsTotal = (1 + rebuys) * state.buyinChips;
+    const chips = clampInt(p.chips, 0);
+    const netChips = chips - buyinsTotal;
+    const netMoney = netChips * state.chipRate;
+    const isMine = canEditRow(p.id);
+    return `
+      <td class="muted small">${idx+1}</td>
+      <td class="name-cell">
+        <input data-k="name" value="${escapeHtml(p.name ?? '')}" placeholder="Name" ${isMine || canEditGlobal() ? '' : 'disabled'}>
+      </td>
+      <td class="right"><input data-k="rebuys" type="number" min="0" step="1" value="${rebuys}" ${isMine ? '' : (canEditGlobal()?'':'disabled')}></td>
+      <td class="right"><span class="muted" data-k="buyinsText">${fmtInt(buyinsTotal)} Chips</span></td>
+      <td class="right"><input data-k="chips" type="number" min="0" step="1" value="${chips}" ${isMine ? '' : (canEditGlobal()?'':'disabled')}></td>
+      <td class="right nowrap"><strong data-k="netChips" class="net-chips ${netChips===0?'':(netChips>0?'green':'red')}">${netChips>0?'+':''}${fmtInt(netChips)}</strong></td>
+      <td class="right nowrap"><strong data-k="netMoney" class="net-money ${netMoney===0?'':(netMoney>0?'green':'red')}">${netMoney>0?'+':''}${fmtMoney(netMoney)}</strong></td>
+      <td class="right">
+        <span class="paid-flag">
+          <input type="checkbox" data-k="paid" ${p.paid?.ok ? 'checked' : ''} ${canConfirmPayment() ? '' : 'disabled'}>
+          <label class="small">${p.paid?.ok ? 'bestätigt' : 'offen'}</label>
+        </span>
+        <div class="small muted" data-k="paidMeta">${p.paid?.by ? `von ${p.paid.by} · ${new Date(p.paid.at).toLocaleString('de-DE')}`:''}</div>
+      </td>
+      <td class="right">
+        <div class="row-actions">
+          <button class="ghost small" data-action="rebuy" ${isMine || canEditGlobal() ? '' : 'disabled'}>+ Rebuy</button>
+          <button class="ghost small" data-action="delete" ${canEditGlobal() ? '' : 'disabled'}>Entfernen</button>
+        </div>
+      </td>
+    `;
+  }
+
+  function attachRowHandlers(tr, p) {
+    const isMine = canEditRow(p.id);
+    const updateDerived = () => {
+      const rebuys = clampInt(p.rebuys);
+      const buyinsTotal = (1 + rebuys) * state.buyinChips;
+      const chips = clampInt(p.chips,0);
+      const netChips = chips - buyinsTotal;
+      const netMoney = netChips * state.chipRate;
+
+      const buyinsText = tr.querySelector('[data-k="buyinsText"]');
+      const netChipsEl = tr.querySelector('[data-k="netChips"]');
+      const netMoneyEl = tr.querySelector('[data-k="netMoney"]');
+      const paidMeta = tr.querySelector('[data-k="paidMeta"]');
+
+      if (buyinsText) buyinsText.textContent = `${fmtInt(buyinsTotal)} Chips`;
+      if (netChipsEl) { netChipsEl.textContent = `${netChips>0?'+':''}${fmtInt(netChips)}`; netChipsEl.className = `net-chips ${netChips===0?'':(netChips>0?'green':'red')}`; }
+      if (netMoneyEl) { netMoneyEl.textContent = `${netMoney>0?'+':''}${fmtMoney(netMoney)}`; netMoneyEl.className = `net-money ${netMoney===0?'':(netMoney>0?'green':'red')}`; }
+      if (paidMeta) paidMeta.textContent = p.paid?.by ? `von ${p.paid.by} · ${new Date(p.paid.at).toLocaleString('de-DE')}` : '';
+    };
+
+    tr.querySelectorAll('input').forEach(inp=>{
+      inp.addEventListener('input', () => {
+        const k = inp.dataset.k;
+        if (k==='name') { if (!(isMine || canEditGlobal())) { inp.value = p.name||''; return; } p.name = inp.value; }
+        if (k==='rebuys') { if (!(isMine || canEditGlobal())) { inp.value = p.rebuys||0; return; } p.rebuys = clampInt(inp.value, 0); }
+        if (k==='chips') { if (!(isMine || canEditGlobal())) { inp.value = p.chips||0; return; } p.chips = clampInt(inp.value, 0); }
+        if (k==='paid')  { if (!canConfirmPayment()) { inp.checked = !!p.paid?.ok; return; } const ok = inp.checked; p.paid = ok ? { ok:true, by: state.role.kind==='admin'?'Admin':'Bank', at: Date.now() } : { ok:false }; }
+        save(); updateDerived(); computeTotals();
+      });
+      inp.addEventListener('change', ()=>{ save(); updateDerived(); computeTotals(); });
+    });
+
+    const rebuyBtn = tr.querySelector('[data-action="rebuy"]');
+    if (rebuyBtn) rebuyBtn.addEventListener('click', ()=>{
+      if (!(isMine || canEditGlobal())) return;
+      p.rebuys = clampInt((p.rebuys||0) + 1, 0);
+      const rebuysInput = tr.querySelector('input[data-k="rebuys"]'); if (rebuysInput) rebuysInput.value = p.rebuys;
+      save(); updateDerived(); computeTotals();
+    });
+
+    const delBtn = tr.querySelector('[data-action="delete"]');
+    if (delBtn) delBtn.addEventListener('click', ()=>{
+      if (!canEditGlobal()) return;
+      if (!confirm(`Spieler „${p.name||('#'+p.id)}“ entfernen?`)) return;
+      state.players = state.players.filter(x=>x.id!==p.id);
+      if (state.role.kind==='player' && state.role.playerId===p.id) state.role = {kind:'viewer', playerId:null};
+      save(); renderAll();
+    });
+
+    updateDerived();
+  }
+
+  function renderRows() {
+    rowsTbody.innerHTML = '';
+    state.players.forEach((p, idx) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = rowHtml(p, idx);
+      rowsTbody.appendChild(tr);
+      attachRowHandlers(tr, p);
+    });
+  }
+
+  function renderAll() { renderHeaderAndStats(); renderRows(); }
+
+  // --- Role/Login handling ---
+  function ensurePins() { if (state.pins.admin===null) state.pins.admin = ''; if (state.pins.bank===null) state.pins.bank = ''; }
+
+  roleSelect.addEventListener('change', renderHeaderAndStats);
+
+  loginBtn.addEventListener('click', async ()=>{
+    const sel = roleSelect.value;
+    if (sel==='viewer') { state.role = {kind:'viewer', playerId:null}; save(); renderAll(); return; }
+    if (sel==='player') {
+      const name = (playerLoginName.value||'').trim();
+      const pass = playerLoginPass.value||'';
+      if (!name || !pass) { alert('Bitte Name und Passwort eingeben.'); return; }
+      const hash = await sha256(pass);
+      let p = getPlayerByName(name);
+      if (!p) { const id = nextId(); p = { id, name, rebuys:0, chips:0, paid:{ok:false}, ph: hash, createdAt: Date.now() }; state.players.push(p); alert(`Konto angelegt für „${name}“.`); }
+      else { if (p.ph && p.ph !== hash) { alert('Falsches Passwort.'); return; } if (!p.ph) { p.ph = hash; alert('Passwort gesetzt.'); } }
+      state.role = {kind:'player', playerId: p.id}; save(); renderAll(); playerLoginPass.value=''; return;
+    }
+    if (sel==='admin' || sel==='bank') {
+      ensurePins(); const pin = (pinInput.value || ''); const target = sel==='admin' ? 'admin' : 'bank';
+      if (!state.pins[target]) { if (!pin) { alert(`Erster Login als ${sel}: Wähle eine PIN und gib sie ein.`); return; } if (!confirm(`${sel}-PIN setzen?`)) return; state.pins[target] = pin; alert(`${sel}-PIN gesetzt.`); }
+      else if (state.pins[target] !== pin) { alert('Falsche PIN.'); return; }
+      state.role = {kind: sel, playerId: null}; pinInput.value=''; save(); renderAll();
+    }
+  });
+
+  logoutBtn.addEventListener('click', ()=>{ state.role = {kind:'viewer', playerId:null}; save(); renderAll(); });
+
+  // --- Global inputs ---
+  buyinEl.addEventListener('change', ()=>{ if (!canEditGlobal()) { buyinEl.value = state.buyinChips; return; } state.buyinChips = Math.max(1, Math.floor(Number(buyinEl.value)||100)); save(); renderRows(); computeTotals(); });
+  chipRateEl.addEventListener('change', ()=>{ if (!canEditGlobal()) { chipRateEl.value = state.chipRate; return; } const v = Number(chipRateEl.value); state.chipRate = isNaN(v) || v<0 ? 0 : v; save(); renderRows(); computeTotals(); });
+  currencyEl.addEventListener('change', ()=>{ if (!canEditGlobal()) { currencyEl.value = state.currency; return; } state.currency = currencyEl.value || '€'; save(); renderRows(); computeTotals(); });
+
+  // --- Buttons ---
+  $('addPlayer').addEventListener('click', ()=>{
+    if (!canEditGlobal()) { alert('Nur Admin kann Spieler hinzufügen.'); return; }
+    const name = (playerNameEl.value || '').trim();
+    const id = nextId();
+    state.players.push({ id, name, rebuys:0, chips:0, paid:{ ok:false }, ph: null, createdAt: Date.now() });
+    playerNameEl.value = ''; save(); renderAll();
+  });
+
+  $('validate').addEventListener('click', ()=>{
+    const totals = state.players.map(p => ({ buyinsTotal: (1 + clampInt(p.rebuys)) * state.buyinChips, chips: clampInt(p.chips,0) }));
+    const sumBuyins = sum(totals.map(t=>t.buyinsTotal)), sumChips = sum(totals.map(t=>t.chips)), diff = sumChips - sumBuyins;
+    if (diff === 0) alert('✅ Konsistenzcheck: OK – Summe Chips = Summe Buy-ins.');
+    else alert(`⚠️ Abweichung: ${(diff>0?'+':'')}${diff} Chips. Prüft bitte die Eingaben (Chips oder Rebuys).`);
+  });
+
+  exportBtn.addEventListener('click', ()=>{
+    const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob); const a = document.createElement('a'); const stamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+    a.href = url; a.download = `poker-ledger-${stamp}.json`; a.click(); URL.revokeObjectURL(url);
+  });
+
+  importBtn.addEventListener('click', ()=> importFile.click());
+  importFile.addEventListener('change', async (e)=>{
+    const file = e.target.files?.[0]; if (!file) return;
+    const text = await file.text();
+    try{
+      const data = JSON.parse(text);
+      if (!data || typeof data!=='object') throw new Error('Ungültige Datei');
+      const clamp = (x)=>Math.max(1, Math.floor(Number(x)||100));
+      state.buyinChips = clamp(data.buyinChips);
+      state.chipRate = Number(data.chipRate) >= 0 ? Number(data.chipRate) : 1;
+      state.currency = data.currency || '€';
+      state.players = Array.isArray(data.players) ? data.players.map(p=>({
+        id: Number(p.id)||nextId(), name: (p.name||'').toString(), rebuys: clampInt(p.rebuys,0), chips: clampInt(p.chips,0),
+        paid: p.paid && typeof p.paid==='object' ? { ok: !!p.paid.ok, by: p.paid.by||'', at: p.paid.at||Date.now() } : { ok:false },
+        ph: p.ph || null, createdAt: p.createdAt || Date.now()
+      })) : [];
+      state.pins = data.pins && typeof data.pins==='object' ? data.pins : state.pins;
+      state.role = {kind:'viewer', playerId:null};
+      save(); renderAll();
+    }catch(err){ alert('Import fehlgeschlagen: ' + err.message); }
+    finally { e.target.value=''; }
+  });
+
+  resetBtn.addEventListener('click', ()=>{
+    if (!canEditGlobal()) { alert('Nur Admin kann alles löschen.'); return; }
+    if (!confirm('Wirklich alles löschen (Spieler, Einstellungen, PINs)?')) return;
+    localStorage.removeItem('poker-ledger-roles');
+    state.buyinChips = 100; state.chipRate = 1; state.currency = '€'; state.players = []; state.role = {kind:'viewer', playerId:null}; state.pins = {admin:null, bank:null};
+    save(); renderAll();
+  });
+
+  // Init
+  load();
+  if (state.players.length === 0) {
+    state.players.push({ id:1, name:'Spieler A', rebuys:0, chips:80,  paid:{ok:false}, ph:null, createdAt:Date.now() });
+    state.players.push({ id:2, name:'Spieler B', rebuys:0, chips:120, paid:{ok:false}, ph:null, createdAt:Date.now() });
+  }
+  renderAll();
+})();
+</script>
+</body>
+</html>
