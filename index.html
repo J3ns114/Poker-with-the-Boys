@@ -234,8 +234,8 @@ document.addEventListener('DOMContentLoaded', () => {
     dealerTips: 0 // unsichtbar, nur für Konsistenz
   };
 
-  const save = ()=> localStorage.setItem('poker-ledger-v6', JSON.stringify(state));
-  const load = ()=> { try{ Object.assign(state, JSON.parse(localStorage.getItem('poker-ledger-v6')||'{}')); }catch{} };
+  const save = ()=> localStorage.setItem('poker-ledger-v7', JSON.stringify(state));
+  const load = ()=> { try{ Object.assign(state, JSON.parse(localStorage.getItem('poker-ledger-v7')||'{}')); }catch{} };
 
   /* ---------- HELPERS ---------- */
   const clampInt = (v, min=0)=> Math.max(min, Math.floor(Number(v)||0));
@@ -305,7 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </label>
       </td>
       <td class="right">
-        <button class="ghost small" data-action="tip" ${editable?'':'disabled'} title="Abrunden & Dealer tippen">💰 Abrunden</button>
+        <button class="ghost small" data-action="tip" ${editable?'':'disabled'} title="Auf nächsten 10er abrunden (Dealer Tip)">💰 Dealer Tip</button>
         <button class="ghost small" data-action="rebuy" ${editable?'':'disabled'}>+ Rebuy</button>
         <button class="ghost small" data-action="delete" ${isAdminLike()?'':'disabled'}>Remove</button>
       </td>`;
@@ -344,28 +344,22 @@ document.addEventListener('DOMContentLoaded', () => {
       save(); renderAll();
     });
 
-    // 💰 Abrunden (Dealer-Tip)
+    // 💰 Dealer Tip: runde Chips auf den nächsten 10er nach unten (141→140, 143→140)
     tr.querySelector('[data-action="tip"]').addEventListener('click', ()=>{
-      if (!!p.paid?.ok) return; if (!(isMine||isAdminLike())) return;
-      const rebuys=clampInt(p.rebuys);
-      const buyinsTotal=(1+rebuys)*state.buyinChips;
-      const chips=clampInt(p.chips,0);
-      const netChips=chips-buyinsTotal;
-      const netMoney=netChips*state.chipRate;
-      if (netMoney <= 0){ alert('Nichts zum Abrunden – Netto ist nicht positiv.'); return; }
+      if (!!p.paid?.ok) return;
+      if (!(isMine||isAdminLike())) return;
 
-      const target = Math.floor(netMoney); // abrunden auf glatten Eurobetrag
-      const need = netMoney - target;      // Betrag, der „weggetippt“ wird
-      if (need <= 0.0001){ alert('Schon glatt.'); return; }
-
-      let tipChips = Math.ceil(need / state.chipRate); // ganze Chips
-      tipChips = Math.min(tipChips, p.chips);          // Sicherheit
-      if (tipChips <= 0){ alert('Kein Chip verfügbar.'); return; }
-
-      p.chips = p.chips - tipChips;
-      state.dealerTips += tipChips;
-
-      save(); updateDerived(); computeTotals(); updateFinishRoundState();
+      const remainder = p.chips % 10; // Rest bis zum 10er
+      if (remainder === 0) {
+        alert('Schon glatt: Chips sind bereits ein Vielfaches von 10.');
+        return;
+      }
+      const tipChips = remainder; // genau so viele Chips als Dealer Tip
+      if (tipChips > 0 && tipChips <= p.chips) {
+        p.chips -= tipChips;
+        state.dealerTips = (state.dealerTips||0) + tipChips;
+        save(); updateDerived(); computeTotals(); updateFinishRoundState();
+      }
     });
 
     updateDerived();
@@ -487,7 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalBuyins=sum(state.players.map(p=>(1+clampInt(p.rebuys))*state.buyinChips));
     const totalChips=sum(state.players.map(p=>clampInt(p.chips,0)));
     const diffAdj = (totalChips + (state.dealerTips||0)) - totalBuyins;
-    alert(diffAdj===0?'✅ Konsistent (inkl. Dealer-Tips).':`⚠️ Abweichung (inkl. Dealer-Tips): ${(diffAdj>0?'+':'')}${diffAdj} Chips.`);
+    alert(diffAdj===0?'✅ Konsistent (inkl. Dealer Tips).':`⚠️ Abweichung (inkl. Dealer Tips): ${(diffAdj>0?'+':'')}${diffAdj} Chips.`);
   });
 
   finishRoundBtn.addEventListener('click', ()=>{
@@ -509,7 +503,7 @@ document.addEventListener('DOMContentLoaded', () => {
   exportBtn.addEventListener('click', ()=>{
     const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
     const url=URL.createObjectURL(blob); const a=document.createElement('a');
-    a.href=url; a.download=`poker-ledger-v6-${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.json`;
+    a.href=url; a.download=`poker-ledger-v7-${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.json`;
     a.click(); URL.revokeObjectURL(url);
   });
   importBtn.addEventListener('click', ()=>importFile.click());
@@ -524,7 +518,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const bank = prompt('Bank-Zustimmung (Tippe „bank“):'); if((bank||'').toLowerCase()!=='bank'){ alert('Bank-Zustimmung fehlt.'); return; }
     const admin = prompt('Admin-Zustimmung (Tippe „admin“):'); if((admin||'').toLowerCase()!=='admin'){ alert('Admin-Zustimmung fehlt.'); return; }
     if(!confirm('Letzte Bestätigung: Wirklich ALLES löschen?')) return;
-    localStorage.removeItem('poker-ledger-v6'); location.reload();
+    localStorage.removeItem('poker-ledger-v7'); location.reload();
   });
 
   /* ---------- QUOTES (unter der Tabelle) ---------- */
