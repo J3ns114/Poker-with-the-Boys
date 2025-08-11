@@ -3,85 +3,86 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Poker Ledger – Runden, Profile & Timeline</title>
+<title>Poker Ledger – Runde & Verlauf</title>
 <style>
   :root{
     --bg:#0e1116; --card:#151a21; --muted:#8fa1b3; --text:#eaf0f6;
-    --accent:#d61f45; --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444;
+    --accent:#d61f45; --ok:#22c55e; --bad:#ef4444;
     --border:#232a35; --gold:#f5bf62; --chip:#5fc7ff;
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--text);font:500 16px/1.45 system-ui,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
-  a{color:var(--chip);text-decoration:none}
-  header{padding:12px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);backdrop-filter:saturate(120%) blur(4px);background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.15))}
+  body{margin:0;background:var(--bg);color:var(--text);font:500 16px/1.45 system-ui,Segoe UI,Roboto,Arial}
+
+  header{padding:12px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.15))}
   h1{font-size:18px;margin:0}
   input,button,select{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
   button{cursor:pointer}
-  button.accent{background:linear-gradient(180deg,#f43f5e,#b91c1c);border-color:transparent;color:#fff;box-shadow:0 6px 18px rgba(244,63,94,.25)}
-  button.ghost{background:transparent}
+  button.accent{background:linear-gradient(180deg,#f43f5e,#b91c1c);border-color:transparent;color:#fff}
   .tabbar{display:flex;gap:8px}
-  .tabbar button{padding:8px 12px}
   .tabbar .active{background:var(--accent);border-color:transparent}
   main{padding:16px;max-width:1260px;margin:0 auto}
   .row{display:flex;gap:12px;flex-wrap:wrap}
   .pill{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;display:flex;gap:10px;align-items:center}
-  .pill label{font-size:13px;color:var(--muted)}
-  .pill input[type="number"], .pill select{width:110px}
   .controls{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
-  .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:auto;box-shadow:0 12px 30px rgba(0,0,0,.25)}
+  .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:auto}
   table{width:100%;border-collapse:collapse;min-width:1020px}
   th,td{padding:12px 14px;border-bottom:1px solid var(--border)}
-  th{font-size:13px;color:var(--muted);font-weight:700;background:rgba(0,0,0,.25);position:sticky;top:0;z-index:1}
+  th{font-size:13px;color:var(--muted);background:rgba(0,0,0,.25);position:sticky;top:0}
   td input{width:100%;text-align:right}
   td.name-cell input{text-align:left}
-  .right{text-align:right}
-  .center{text-align:center}
-  .muted{color:var(--muted)}
-  .green{color:var(--ok);font-variant-numeric:tabular-nums}
-  .red{color:var(--bad);font-variant-numeric:tabular-nums}
-  .chip{font-weight:700;color:var(--chip)}
+  .right{text-align:right}.center{text-align:center}.muted{color:var(--muted)}
+  .green{color:var(--ok)} .red{color:var(--bad)}
   .badge{padding:4px 8px;border-radius:999px;border:1px solid var(--border);font-size:12px;background:rgba(0,0,0,.2)}
   .badge.ok{border-color:var(--ok);color:var(--ok)}
-  .badge.bad{border-color:var(--bad);color:var(--bad)}
-  .small{font-size:12px}
-  .row-actions{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
-  .danger{background:transparent;border-color:var(--bad);color:var(--bad)}
-  .success{background:transparent;border-color:var(--ok);color:var(--ok)}
-  .lock{opacity:.6;pointer-events:none}
-  .nowrap{white-space:nowrap}
-  .net-chips,.net-money{display:inline-block;min-width:150px;text-align:right}
   .panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px}
   .timeline{display:flex;flex-direction:column;gap:10px;max-height:60vh;overflow:auto}
   .round-item{border:1px solid var(--border);border-radius:10px;padding:10px;background:rgba(0,0,0,.15)}
-  .round-item .line{display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between}
   .grid{display:grid;grid-template-columns:1fr 2fr;gap:12px}
-  @media (max-width:960px){.grid{grid-template-columns:1fr}}
-  /* Background image */
-  .bg-overlay{position:fixed;inset:0;pointer-events:none;z-index:-2}
-  /* Start/Login/Register screen */
-  .startscreen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#000;z-index:9999}
-  .start-bg{position:absolute;inset:0;background-position:center;background-size:cover;filter:brightness(.55);opacity:.95}
-  .start-card{position:relative;width:min(820px,92vw);background:rgba(14,17,22,.85);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.55)}
-  .start-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
-  .start-title{font-size:22px}
-  .start-body{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .start-note{font-size:12px;color:var(--muted)}
-  .start-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-  /* Tabs */
-  .tab{display:none}
-  .tab.active{display:block}
-  /* Quotes Ticker – poker look */
-  .quotes-wrap{position:fixed;left:0;right:0;bottom:0;overflow:hidden;border-top:1px solid var(--border);
-    background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.45));padding:8px 0;z-index:10}
-  .quotes-track{position:relative;left:-100%;display:flex;gap:40px;white-space:nowrap;will-change:transform;animation:marquee-ltr 48s linear infinite}
-  .quote{font-style:italic;color:var(--gold);background:rgba(255,255,255,.06);border:1px solid var(--border);padding:6px 12px;border-radius:999px;font-size:14px}
-  .quote .author{opacity:.9;color:#ffe2a6;margin-left:10px}
+  @media(max-width:960px){.grid{grid-template-columns:1fr}}
+
+  /* Hintergrund: Schwarz/Rot Pokerbild + Overlays */
+  .bg{
+    position:fixed; inset:0; z-index:-1;
+    background:
+      radial-gradient(1200px 600px at 80% 120%, rgba(255,0,0,.15), transparent 60%),
+      linear-gradient(160deg, rgba(0,0,0,.55), rgba(120,0,0,.45)),
+      url('https://images.unsplash.com/photo-1544928147-79a2dbc1c0d7?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat fixed;
+    filter:saturate(105%);
+  }
+
+  .tab{display:none}.tab.active{display:block}
+  .player-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .hint{font-size:12px;color:var(--muted)}
+
+  /* Quotes-Bereich: unter der Tabelle, scrollt mit */
+  .quotes-section{
+    margin:32px 0 0 0;
+    background:linear-gradient(180deg,rgba(70,0,0,.35),rgba(120,0,0,.35));
+    border-top:1px solid rgba(255,255,255,.08);
+    border-bottom:1px solid rgba(255,255,255,.08);
+    padding:22px 0 28px;
+  }
+  .quotes-row{overflow:hidden;white-space:nowrap;margin:22px 0}
+  .quotes-track{
+    position:relative; left:-100%;
+    display:flex; gap:200px; /* viel horizontaler Abstand */
+    animation:marquee-ltr 480s linear infinite; /* sehr langsam */
+    will-change:transform;
+  }
+  .quote{
+    font-style:italic; border:1px solid rgba(255,255,255,.08); padding:12px 20px;
+    border-radius:999px; font-size:20px; background:rgba(0,0,0,.28)
+  }
+  .quote.gold{color:var(--gold)}
+  .quote.gold .author{color:#ffe8b8}
+  .quote.white{color:#ffffff}
+  .quote.white .author{color:#ededed}
+  .quote .author{opacity:.95;margin-left:12px}
   @keyframes marquee-ltr{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
 </style>
 </head>
 <body>
-<!-- Background (Unsplash – lizenzfrei) -->
-<div id="bg" class="bg-overlay"></div>
+<div class="bg"></div>
 
 <header>
   <h1>🃏 Poker Ledger <span style="color:var(--gold)">♠ ♥ ♦ ♣</span></h1>
@@ -89,25 +90,29 @@
     <button data-tab="current" class="active">Aktuelle Runde</button>
     <button data-tab="history">Verlauf</button>
   </div>
-  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-    <span class="small muted">Rolle:</span>
+  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+    <span class="hint">Rolle:</span>
     <select id="roleSelect">
-      <option value="viewer">Viewer</option>
       <option value="player" selected>Spieler</option>
       <option value="bank">Bank</option>
       <option value="admin">Admin</option>
+      <option value="viewer">Viewer</option>
     </select>
-    <input id="playerLoginName" placeholder="Name" style="width:150px">
-    <input id="playerLoginPass" type="password" placeholder="Passwort / PIN" style="width:150px">
-    <button id="registerBtn" class="ghost">Registrieren</button>
-    <button id="loginBtn">Anmelden</button>
-    <button id="logoutBtn" class="ghost">Abmelden</button>
-    <span class="muted small">Aktuell: <strong id="whoNow">Viewer</strong></span>
+
+    <!-- Spieler-Profil -->
+    <div id="playerTools" class="player-tools">
+      <span class="hint">Mein Profil:</span>
+      <select id="playerProfileSelect" style="min-width:180px"></select>
+      <input id="newPlayerName" placeholder="Neuen Namen anlegen…" style="width:240px">
+      <button id="createProfileBtn">Profil anlegen</button>
+    </div>
+
+    <span class="hint">Aktuell: <strong id="whoNow">Spieler</strong></span>
   </div>
 </header>
 
 <main>
-  <!-- TAB: Aktuelle Runde -->
+  <!-- Aktuelle Runde -->
   <section id="tab-current" class="tab active">
     <div class="row">
       <div class="pill">
@@ -118,14 +123,12 @@
         <label>1 Chip =</label>
         <input id="chipRate" type="number" min="0" step="0.01" value="0.05">
         <select id="currency" style="width:80px">
-          <option value="€" selected>€</option>
-          <option value="$">$</option>
-          <option value="CHF">CHF</option>
+          <option value="€" selected>€</option><option value="$">$</option><option value="CHF">CHF</option>
         </select>
       </div>
       <div class="pill">
         <label>Runde:</label>
-        <input id="roundName" placeholder="z. B. 11.08.2025 Homegame" style="width:220px">
+        <input id="roundName" placeholder="z. B. heutiges Homegame" style="width:260px">
         <button id="finishRound" class="accent">Runde abschließen</button>
       </div>
     </div>
@@ -135,10 +138,10 @@
       <button class="accent" id="addPlayer">+ Spieler</button>
       <button id="validate">Konsistenz prüfen</button>
       <div style="flex:1"></div>
-      <button id="exportBtn" class="success">Export</button>
+      <button id="exportBtn">Export</button>
       <button id="importBtn">Import</button>
       <input id="importFile" type="file" accept="application/json" style="display:none">
-      <button id="resetBtn" class="danger">Alles löschen</button>
+      <button id="resetBtn" style="border-color:var(--bad);color:var(--bad)">Alles löschen</button>
     </div>
 
     <div class="table-wrap">
@@ -159,7 +162,7 @@
         <tbody id="rows"></tbody>
         <tfoot>
           <tr>
-            <td colspan="2"><span class="muted small">Summe</span></td>
+            <td colspan="2"><span class="hint">Summe</span></td>
             <td class="right"><span id="sumRebuys" class="badge"></span></td>
             <td class="right"><span id="sumBuyins" class="badge"></span></td>
             <td class="right"><span id="sumChips" class="badge"></span></td>
@@ -173,84 +176,47 @@
     </div>
   </section>
 
-  <!-- TAB: Verlauf -->
+  <!-- Verlauf -->
   <section id="tab-history" class="tab">
     <div class="grid">
       <div class="panel">
         <div class="row" style="justify-content:space-between;align-items:center">
           <h3 style="margin:0">🕒 Verlauf</h3>
           <div class="row">
-            <label class="small muted">Spielerfilter:</label>
+            <label class="hint">Spielerfilter:</label>
             <select id="historyFilter" style="min-width:180px"></select>
-            <button id="clearFilter" class="ghost">X</button>
+            <button id="clearFilter">X</button>
           </div>
         </div>
         <div id="timeline" class="timeline" style="margin-top:10px"></div>
       </div>
       <div class="panel">
         <h3 style="margin-top:0">📊 Spieler-Stats</h3>
-        <div class="small muted" id="statsHint">Melde dich als Spieler an, um deine persönlichen Statistiken zu sehen.</div>
+        <div class="hint" id="statsHint">Wähle oben dein Spieler-Profil, um deine Stats zu sehen.</div>
         <div id="myStats" style="display:none">
           <div>Gesamt Rebuys: <strong id="sRebuys">0</strong></div>
-          <div>Gesamt Netto (Chips): <strong id="sNetChips" class="chip">0</strong></div>
+          <div>Gesamt Netto (Chips): <strong id="sNetChips">0</strong></div>
           <div>Gesamt Netto (Geld): <strong id="sNetMoney">0,00 €</strong></div>
-          <div>Gewinn-Runden: <strong id="sWins">0</strong> &nbsp;·&nbsp; Verlust-Runden: <strong id="sLosses">0</strong></div>
-          <div class="small muted" style="margin-top:6px">Nur abgeschlossene Runden zählen in deine Stats.</div>
+          <div>Gewinn-Runden: <strong id="sWins">0</strong> · Verlust-Runden: <strong id="sLosses">0</strong></div>
+          <div class="hint" style="margin-top:6px">Nur abgeschlossene Runden zählen.</div>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- Zitate-Bereich (unter der Tabelle, scrollt mit) -->
+  <section class="quotes-section">
+    <div class="quotes-row"><div id="quotesTrack1" class="quotes-track"></div></div>
+    <div class="quotes-row"><div id="quotesTrack2" class="quotes-track"></div></div>
+    <div class="quotes-row"><div id="quotesTrack3" class="quotes-track"></div></div>
+  </section>
 </main>
 
-<!-- Quotes ticker -->
-<div class="quotes-wrap"><div id="quotesTrack" class="quotes-track"></div></div>
-
-<!-- Start/Login/Register screen -->
-<div id="startscreen" class="startscreen">
-  <div id="startBg" class="start-bg"></div>
-  <div class="start-card">
-    <div class="start-head">
-      <div class="start-title">🃏 Poker Ledger</div>
-      <div class="start-actions">
-        <button id="enterBtn" class="accent">Enter App</button>
-      </div>
-    </div>
-    <div class="start-body">
-      <div>
-        <div class="pill" style="width:100%;margin-bottom:8px">
-          <span class="small muted">Rolle wählen & anmelden/registrieren:</span>
-        </div>
-        <div class="row" style="gap:8px;flex-wrap:wrap">
-          <select id="startRole">
-            <option value="player" selected>Spieler</option>
-            <option value="bank">Bank</option>
-            <option value="admin">Admin</option>
-            <option value="viewer">Viewer</option>
-          </select>
-          <input id="startName" placeholder="Name (bei Spieler)" value="spieler1">
-          <input id="startPass" type="password" placeholder="Passwort / PIN" value="1234">
-          <button id="startRegister" class="ghost">Registrieren</button>
-          <button id="startLogin" class="accent">Anmelden</button>
-        </div>
-        <p class="start-note">Sofort-Logins: <b>spieler1/1234</b>, <b>bank/bank123</b>, <b>admin/admin123</b>. Hintergrund ist ein lizenzfreies Pokerbild (Unsplash).</p>
-      </div>
-      <div class="start-note">
-        <p>Tipps:</p>
-        <ul>
-          <li>Standard: 1 Chip = 0.05 € • Buy-in = 100 Chips</li>
-          <li>„Paid“-Häkchen sperrt Eingaben (nur Bank/Admin setzen/entfernen).</li>
-          <li>Wenn alle bezahlt → „Runde abschließen“ speichert sie im Verlauf (Quotes werden neu gemischt).</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</div>
-
 <script>
-(() => {
+document.addEventListener('DOMContentLoaded', () => {
   const $ = id => document.getElementById(id);
 
-  // ---------- STATE ----------
+  /* ---------- STATE ---------- */
   const state = {
     buyinChips: 100,
     chipRate: 0.05,
@@ -258,113 +224,38 @@
     roundName: "",
     players: [],
     rounds: [],
-    role: { kind: 'viewer', playerId: null },
-    pins: { admin: null, bank: null },
-    bg: 'unsplash' // flag only
+    role: { kind:'player', playerId:null }, // Start als Spieler
   };
 
-  // ---------- PERSISTENCE ----------
-  const save = () => localStorage.setItem('poker-ledger-v2', JSON.stringify(state));
-  const load = () => {
-    const raw = localStorage.getItem('poker-ledger-v2');
-    if (!raw) return;
-    try {
-      const s = JSON.parse(raw);
-      state.buyinChips = Number(s.buyinChips) || 100;
-      state.chipRate   = (s.chipRate===0||s.chipRate)? Number(s.chipRate) : 0.05;
-      state.currency   = s.currency || "€";
-      state.roundName  = s.roundName || "";
-      state.players    = Array.isArray(s.players) ? s.players : [];
-      state.rounds     = Array.isArray(s.rounds) ? s.rounds : [];
-      state.role       = s.role || {kind:'viewer', playerId:null};
-      state.pins       = s.pins || {admin:null, bank:null};
-      state.bg         = s.bg || 'unsplash';
-    } catch(e){ console.warn('Load error', e); }
-  };
+  const save = ()=> localStorage.setItem('poker-ledger-v5', JSON.stringify(state));
+  const load = ()=> { try{ Object.assign(state, JSON.parse(localStorage.getItem('poker-ledger-v5')||'{}')); }catch{} };
 
-  // ---------- HELPERS ----------
-  const clampInt = (v, min=0) => Math.max(min, Math.floor(Number(v)||0));
-  const sum = arr => arr.reduce((a,b)=>a+b,0);
-  const fmtInt = n => (Number(n)||0).toLocaleString('de-DE', { maximumFractionDigits:0 });
-  const fmtMoney = n => `${(Number(n)||0).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})} ${state.currency}`;
-  const todayStr = () => new Date().toLocaleDateString('de-DE');
-  const nextId = list => Math.max(0, ...list.map(x=>x.id||0)) + 1;
-  const getPlayerById = id => state.players.find(p=>p.id===id);
-  const getPlayerByName = name => state.players.find(p=>(p.name||'').toLowerCase()===(name||'').toLowerCase());
-  const isAdminLike = () => state.role.kind==='admin' || state.role.kind==='bank';
-  const canConfirmPayment = () => isAdminLike();
-  const canEditRow = pid => isAdminLike() || (state.role.kind==='player' && state.role.playerId===pid);
-  const sha256 = async (text) => {
-    if (window.crypto?.subtle) {
-      const enc = new TextEncoder().encode(text);
-      const buf = await crypto.subtle.digest('SHA-256', enc);
-      return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
-    }
-    let h=0; for (let i=0;i<text.length;i++){ h=(h<<5)-h+text.charCodeAt(i); h|=0; } return 'x'+Math.abs(h);
-  };
+  /* ---------- HELPERS ---------- */
+  const clampInt = (v, min=0)=> Math.max(min, Math.floor(Number(v)||0));
+  const sum=a=>a.reduce((x,y)=>x+y,0);
+  const fmtInt=n=>(Number(n)||0).toLocaleString('de-DE',{maximumFractionDigits:0});
+  const fmtMoney=n=> (Number(n)||0).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})+' '+state.currency;
+  const todayStr=()=> new Date().toLocaleDateString('de-DE');
+  const nextId=list=> Math.max(0,...list.map(x=>x.id||0))+1;
+  const getPlayerById=id=> state.players.find(p=>p.id===id);
+  const getPlayerByName=name=> state.players.find(p=>(p.name||'').toLowerCase()===(name||'').toLowerCase());
+  const isAdminLike=()=> state.role.kind==='admin'||state.role.kind==='bank';
+  const canConfirmPayment=()=> isAdminLike();
+  const canEditRow=pid=> isAdminLike() || (state.role.kind==='player' && state.role.playerId===pid);
 
-  // ---------- UI REFS ----------
+  /* ---------- UI refs ---------- */
   const buyinEl=$('buyin'), chipRateEl=$('chipRate'), currencyEl=$('currency'), roundNameEl=$('roundName'), finishRoundBtn=$('finishRound');
   const playerNameEl=$('playerName'), addPlayerBtn=$('addPlayer'), validateBtn=$('validate');
   const exportBtn=$('exportBtn'), importBtn=$('importBtn'), importFile=$('importFile'), resetBtn=$('resetBtn');
   const rowsTbody=$('rows');
-  const roleSelect=$('roleSelect'), playerLoginName=$('playerLoginName'), playerLoginPass=$('playerLoginPass'), loginBtn=$('loginBtn'), logoutBtn=$('logoutBtn'), whoNow=$('whoNow'), registerBtn=$('registerBtn');
-  const paidCountEl=$('paidCount');
-  const timelineEl=$('timeline');
-  const historyFilter=$('historyFilter'), clearFilter=$('clearFilter');
+  const roleSelect=$('roleSelect'), whoNow=$('whoNow');
+
+  const playerTools=$('playerTools'), playerProfileSelect=$('playerProfileSelect'), newPlayerName=$('newPlayerName'), createProfileBtn=$('createProfileBtn');
+
+  const timelineEl=$('timeline'), historyFilter=$('historyFilter'), clearFilter=$('clearFilter');
   const statsHint=$('statsHint'), myStatsWrap=$('myStats'), sRebuys=$('sRebuys'), sNetChips=$('sNetChips'), sNetMoney=$('sNetMoney'), sWins=$('sWins'), sLosses=$('sLosses');
-  const quotesTrack=$('quotesTrack');
 
-  // Tabs
-  document.querySelectorAll('.tabbar button').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      document.querySelectorAll('.tabbar button').forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-      document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
-    });
-  });
-
-  // ---------- SEED DEFAULT ACCOUNTS ----------
-  async function seedDefaultsIfMissing(){
-    if (!state.pins.admin) state.pins.admin = 'admin123';
-    if (!state.pins.bank)  state.pins.bank  = 'bank123';
-    if (!getPlayerByName('spieler1')){
-      const id = nextId(state.players);
-      const ph = await sha256('1234');
-      state.players.push({ id, name:'spieler1', rebuys:0, chips:0, paid:{ok:false}, ph, createdAt:Date.now() });
-    }
-    save();
-  }
-
-  // ---------- RENDER ----------
-  function applyBackground(){
-    // Unsplash: generisches Pokerbild (Chips/Karten)
-    const url = "https://images.unsplash.com/photo-1541849548-216549ae2160?auto=format&fit=crop&w=1920&q=80";
-    $('bg').style.background = `linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.65)), url('${url}') center/cover no-repeat fixed`;
-  }
-
-  function whoName(){
-    if (state.role.kind==='admin') return 'Admin';
-    if (state.role.kind==='bank')  return 'Bank';
-    if (state.role.kind==='player'){ const p=getPlayerById(state.role.playerId); return p?`Spieler: ${p.name}`:'Spieler'; }
-    return 'Viewer';
-  }
-
-  function renderHeaderAndTotals(){
-    buyinEl.value=state.buyinChips; chipRateEl.value=state.chipRate; currencyEl.value=state.currency;
-    roundNameEl.value=state.roundName || `${todayStr()} Homegame`;
-
-    const lockGlobal = !isAdminLike();
-    [buyinEl,chipRateEl,currencyEl,playerNameEl,addPlayerBtn,resetBtn,finishRoundBtn,roundNameEl].forEach(el=>{
-      if(!el) return; el.disabled = lockGlobal ? (el===validateBtn?false:true) : false; el.classList.toggle('lock', lockGlobal && el!==validateBtn);
-    });
-
-    whoNow.textContent = whoName();
-
-    computeTotals(); renderTimeline(); renderMyStats(); fillHistoryFilter(); updateFinishRoundState();
-  }
-
+  /* ---------- RENDER ---------- */
   function computeTotals(){
     const totals = state.players.map(p=>{
       const rebuys=clampInt(p.rebuys); const buyinsTotal=(1+rebuys)*state.buyinChips; const chips=clampInt(p.chips,0); const net=chips-buyinsTotal;
@@ -377,54 +268,50 @@
     const sumNetMoney = sumNet*state.chipRate;
     const paidCount = totals.filter(t=>t.paid).length;
 
-    $('sumRebuys').textContent=`${sumRebuys}`;
-    $('sumBuyins').textContent=`${fmtInt(sumBuyins)} Chips`;
-    $('sumChips').textContent =`${fmtInt(sumChips)} Chips`;
+    $('sumRebuys').textContent=sumRebuys;
+    $('sumBuyins').textContent=fmtInt(sumBuyins)+' Chips';
+    $('sumChips').textContent =fmtInt(sumChips)+' Chips';
     $('sumNet').textContent   =(sumNet>0?'+':'')+fmtInt(sumNet)+' Chips';
-    $('sumNet').className='badge '+(sumNet===0?'':(sumNet>0?'ok':'bad'));
+    $('sumNet').className='badge '+(sumNet===0?'':(sumNet>0?'ok':''));
     $('sumNetMoney').textContent=(sumNetMoney>0?'+':'')+fmtMoney(sumNetMoney);
-    paidCountEl.textContent = `${paidCount} / ${state.players.length} bezahlt`;
-    paidCountEl.className = 'badge ' + (paidCount===state.players.length && state.players.length>0 ? 'ok' : '');
+    $('paidCount').textContent=`${paidCount} / ${state.players.length} bezahlt`;
+    $('paidCount').className='badge '+(paidCount===state.players.length && state.players.length>0 ? 'ok':'');
   }
 
   function rowHtml(p, idx){
     const rebuys=clampInt(p.rebuys); const buyinsTotal=(1+rebuys)*state.buyinChips; const chips=clampInt(p.chips,0);
-    const netChips = chips - buyinsTotal; const netMoney = netChips*state.chipRate;
-    const isMine = canEditRow(p.id); const locked=!!p.paid?.ok; const editable=(isMine||isAdminLike()) && !locked;
-    const statusLabel = p.paid?.ok ? `<span class="badge ok">✅ paid</span>` : `<span class="badge">open</span>`;
+    const netChips=chips-buyinsTotal; const netMoney=netChips*state.chipRate;
+    const isMine=canEditRow(p.id); const locked=!!p.paid?.ok; const editable=(isMine||isAdminLike()) && !locked;
+    const status = p.paid?.ok ? `<span class="badge ok">✅ paid</span>` : `<span class="badge">open</span>`;
     return `
-      <td class="muted small">${idx+1}</td>
-      <td class="name-cell"><input data-k="name" value="${(p.name||'')}" placeholder="Name" ${editable||isAdminLike()?'':'disabled'} ${locked?'disabled':''}></td>
+      <td class="muted" style="font-size:12px">${idx+1}</td>
+      <td class="name-cell"><input data-k="name" value="${p.name||''}" ${editable||isAdminLike()?'':'disabled'} ${locked?'disabled':''}></td>
       <td class="right"><input data-k="rebuys" type="number" min="0" step="1" value="${rebuys}" ${editable?'':'disabled'}></td>
-      <td class="right"><span class="muted" data-k="buyinsText">${fmtInt(buyinsTotal)} Chips</span></td>
+      <td class="right"><span data-k="buyinsText" class="muted">${fmtInt(buyinsTotal)} Chips</span></td>
       <td class="right"><input data-k="chips" type="number" min="0" step="1" value="${chips}" ${editable?'':'disabled'}></td>
-      <td class="right nowrap"><strong data-k="netChips" class="net-chips ${netChips===0?'':(netChips>0?'green':'red')}">${netChips>0?'+':''}${fmtInt(netChips)}</strong></td>
-      <td class="right nowrap"><strong data-k="netMoney" class="net-money ${netMoney===0?'':(netMoney>0?'green':'red')}">${netMoney>0?'+':''}${fmtMoney(netMoney)}</strong></td>
+      <td class="right"><strong data-k="netChips" class="${netChips>0?'green':(netChips<0?'red':'')}">${netChips>0?'+':''}${fmtInt(netChips)}</strong></td>
+      <td class="right"><strong data-k="netMoney" class="${netMoney>0?'green':(netMoney<0?'red':'')}">${netMoney>0?'+':''}${fmtMoney(netMoney)}</strong></td>
       <td class="center">
-        <label class="small">
-          <input type="checkbox" data-k="paid" ${p.paid?.ok?'checked':''} ${canConfirmPayment()? '': 'disabled'}>
-          ${statusLabel}
+        <label class="muted" style="font-size:12px">
+          <input type="checkbox" data-k="paid" ${p.paid?.ok?'checked':''} ${canConfirmPayment()?'':'disabled'}>
+          ${status}
         </label>
-        <div class="small muted" data-k="paidMeta">${p.paid?.by ? `by ${p.paid.by} · ${new Date(p.paid.at).toLocaleString('de-DE')}`:''}</div>
+        <div class="muted" data-k="paidMeta" style="font-size:12px">${p.paid?.by? `by ${p.paid.by} · ${new Date(p.paid.at).toLocaleString('de-DE')}`:''}</div>
       </td>
       <td class="right">
-        <div class="row-actions">
-          <button class="ghost small" data-action="rebuy" ${editable?'':'disabled'}>+ Rebuy</button>
-          <button class="ghost small" data-action="delete" ${isAdminLike()? '': 'disabled'}>Remove</button>
-        </div>
+        <button class="ghost small" data-action="rebuy" ${editable?'':'disabled'}>+ Rebuy</button>
+        <button class="ghost small" data-action="delete" ${isAdminLike()?'':'disabled'}>Remove</button>
       </td>`;
   }
-
   function attachRowHandlers(tr,p){
-    const isMine = canEditRow(p.id);
+    const isMine=canEditRow(p.id);
     const updateDerived=()=>{
-      const rebuys=clampInt(p.rebuys); const buyinsTotal=(1+rebuys)*state.buyinChips; const chips=clampInt(p.chips,0);
-      const netChips=chips-buyinsTotal; const netMoney=netChips*state.chipRate;
-      const buyinsText=tr.querySelector('[data-k="buyinsText"]'); const netChipsEl=tr.querySelector('[data-k="netChips"]'); const netMoneyEl=tr.querySelector('[data-k="netMoney"]'); const paidMeta=tr.querySelector('[data-k="paidMeta"]');
-      if (buyinsText) buyinsText.textContent=`${fmtInt(buyinsTotal)} Chips`;
-      if (netChipsEl){ netChipsEl.textContent=`${netChips>0?'+':''}${fmtInt(netChips)}`; netChipsEl.className=`net-chips ${netChips===0?'':(netChips>0?'green':'red')}`; }
-      if (netMoneyEl){ netMoneyEl.textContent=`${netMoney>0?'+':''}${fmtMoney(netMoney)}`; netMoneyEl.className=`net-money ${netMoney===0?'':(netMoney>0?'green':'red')}`; }
-      if (paidMeta) paidMeta.textContent = p.paid?.by ? `by ${p.paid.by} · ${new Date(p.paid.at).toLocaleString('de-DE')}` : '';
+      const rebuys=clampInt(p.rebuys), buyinsTotal=(1+rebuys)*state.buyinChips, chips=clampInt(p.chips,0);
+      const netChips=chips-buyinsTotal, netMoney=netChips*state.chipRate;
+      tr.querySelector('[data-k="buyinsText"]').textContent=`${fmtInt(buyinsTotal)} Chips`;
+      const nc=tr.querySelector('[data-k="netChips"]'); nc.textContent=`${netChips>0?'+':''}${fmtInt(netChips)}`; nc.className=(netChips>0?'green':(netChips<0?'red':''));
+      const nm=tr.querySelector('[data-k="netMoney"]'); nm.textContent=`${netMoney>0?'+':''}${fmtMoney(netMoney)}`; nm.className=(netMoney>0?'green':(netMoney<0?'red':''));
+      tr.querySelector('[data-k="paidMeta"]').textContent = p.paid?.by ? `by ${p.paid.by} · ${new Date(p.paid.at).toLocaleString('de-DE')}` : '';
     };
     tr.querySelectorAll('input').forEach(inp=>{
       inp.addEventListener('input', ()=>{
@@ -438,63 +325,26 @@
         }
         save(); updateDerived(); computeTotals(); updateFinishRoundState();
       });
-      inp.addEventListener('change', ()=>{ save(); updateDerived(); computeTotals(); updateFinishRoundState(); });
     });
-    const rebuyBtn=tr.querySelector('[data-action="rebuy"]');
-    if (rebuyBtn) rebuyBtn.addEventListener('click', ()=>{
+    tr.querySelector('[data-action="rebuy"]').addEventListener('click', ()=>{
       if (!!p.paid?.ok) return; if (!(isMine||isAdminLike())) return;
-      p.rebuys=clampInt((p.rebuys||0)+1,0); const re=tr.querySelector('input[data-k="rebuys"]'); if (re) re.value=p.rebuys;
-      save(); updateDerived(); computeTotals(); updateFinishRoundState();
+      p.rebuys=clampInt((p.rebuys||0)+1,0); tr.querySelector('input[data-k="rebuys"]').value=p.rebuys; save(); updateDerived(); computeTotals(); updateFinishRoundState();
     });
-    const delBtn=tr.querySelector('[data-action="delete"]');
-    if (delBtn) delBtn.addEventListener('click', ()=>{
+    tr.querySelector('[data-action="delete"]').addEventListener('click', ()=>{
       if (!isAdminLike()) return; if (!confirm(`Spieler „${p.name||('#'+p.id)}“ entfernen?`)) return;
-      state.players = state.players.filter(x=>x.id!==p.id); if (state.role.kind==='player' && state.role.playerId===p.id) state.role={kind:'viewer',playerId:null};
+      const removedMine = (state.role.kind==='player' && state.role.playerId===p.id);
+      state.players = state.players.filter(x=>x.id!==p.id);
+      if (removedMine){ state.role.playerId=null; }
       save(); renderAll();
     });
     updateDerived();
   }
-
   function renderRows(){
-    rowsTbody.innerHTML=''; state.players.forEach((p,idx)=>{ const tr=document.createElement('tr'); tr.innerHTML=rowHtml(p,idx); rowsTbody.appendChild(tr); attachRowHandlers(tr,p); });
-  }
-  function renderAll(){ renderHeaderAndTotals(); renderRows(); }
-
-  // ---------- Timeline & Stats ----------
-  function renderTimeline(){
-    timelineEl.innerHTML='';
-    let rounds=[...state.rounds].sort((a,b)=>b.date-a.date);
-    const filterVal = historyFilter.value||'';
-    if (filterVal){ const pid=Number(filterVal); rounds = rounds.map(r=>({ ...r, entries: r.entries.filter(e=>e.playerId===pid) })).filter(r=>r.entries.length>0); }
-    if (!rounds.length){ timelineEl.innerHTML=`<div class="muted small">Noch keine abgeschlossene Runde.</div>`; return; }
-    rounds.forEach(r=>{
-      const winners=[...r.entries].sort((a,b)=>b.netMoney-a.netMoney);
-      const top=winners[0], bottom=winners[winners.length-1];
-      const div=document.createElement('div'); div.className='round-item';
-      const totalsEuro = r.totals.netMoney.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});
-      div.innerHTML=`
-        <div class="line">
-          <div><strong>${r.name}</strong> <span class="muted small">(${new Date(r.date).toLocaleString('de-DE')})</span></div>
-          <div class="small muted">Buy-in: ${r.buyinChips} Chips · 1 Chip = ${r.chipRate.toFixed(2)} ${r.currency}</div>
-        </div>
-        <div class="line">
-          <div class="small">Spieler: <strong>${r.entries.length}</strong></div>
-          <div class="small">Summe Netto: <strong>${(r.totals.netChips>0?'+':'')}${fmtInt(r.totals.netChips)} Chips</strong> · <strong>${(r.totals.netMoney>0?'+':'')}${totalsEuro} ${r.currency}</strong></div>
-        </div>
-        <div class="small">Top: <strong>${top?.name||'-'}</strong> (${top?.netMoney>0?'+':''}${(top?.netMoney||0).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})} ${r.currency}) · Flop: <strong>${bottom?.name||'-'}</strong> (${bottom?.netMoney>0?'+':''}${(bottom?.netMoney||0).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})} ${r.currency})</div>`;
-      timelineEl.appendChild(div);
+    rowsTbody.innerHTML='';
+    state.players.forEach((p,idx)=>{
+      const tr=document.createElement('tr'); tr.innerHTML=rowHtml(p,idx);
+      rowsTbody.appendChild(tr); attachRowHandlers(tr,p);
     });
-  }
-
-  function renderMyStats(){
-    if (state.role.kind!=='player'){ statsHint.style.display=''; myStatsWrap.style.display='none'; return; }
-    const me=getPlayerById(state.role.playerId); if (!me){ statsHint.style.display=''; myStatsWrap.style.display='none'; return; }
-    let reb=0,netC=0,netM=0,wins=0,losses=0;
-    for (const r of state.rounds){ const e=r.entries.find(x=>x.playerId===me.id); if(!e) continue; reb+=e.rebuys; netC+=e.netChips; netM+=e.netMoney; if(e.netMoney>0) wins++; else if(e.netMoney<0) losses++; }
-    sRebuys.textContent=fmtInt(reb); sNetChips.textContent=(netC>0?'+':'')+fmtInt(netC);
-    sNetMoney.textContent=((netM>0?'+':'')+netM.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})+' '+state.currency);
-    sWins.textContent=wins; sLosses.textContent=losses;
-    statsHint.style.display='none'; myStatsWrap.style.display='';
   }
 
   function fillHistoryFilter(){
@@ -502,161 +352,157 @@
     historyFilter.innerHTML='<option value="">— alle Spieler —</option>'+state.players.map(p=>`<option value="${p.id}">${p.name||('ID '+p.id)}</option>`).join('');
     historyFilter.value=prev;
   }
+  function renderTimeline(){
+    timelineEl.innerHTML='';
+    let rounds=[...state.rounds].sort((a,b)=>b.date-a.date);
+    const filterVal = historyFilter.value||'';
+    if (filterVal){ const pid=Number(filterVal); rounds = rounds.map(r=>({ ...r, entries: r.entries.filter(e=>e.playerId===pid) })).filter(r=>r.entries.length>0); }
+    if (!rounds.length){ timelineEl.innerHTML='<div class="hint">Noch keine abgeschlossene Runde.</div>'; return; }
+    rounds.forEach(r=>{
+      const winners=[...r.entries].sort((a,b)=>b.netMoney-a.netMoney);
+      const top=winners[0], bottom=winners[winners.length-1];
+      const euro=x=>(x||0).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})+' '+r.currency;
+      const div=document.createElement('div'); div.className='round-item';
+      div.innerHTML=`
+        <div style="display:flex;justify-content:space-between;flex-wrap:wrap;">
+          <div><strong>${r.name}</strong> <span class="hint">(${new Date(r.date).toLocaleString('de-DE')})</span></div>
+          <div class="hint">Buy-in: ${r.buyinChips} Chips · 1 Chip = ${r.chipRate.toFixed(2)} ${r.currency}</div>
+        </div>
+        <div class="small" style="margin-top:6px">Spieler: <strong>${r.entries.length}</strong> · Summe Netto: <strong>${(r.totals.netChips>0?'+':'')}${fmtInt(r.totals.netChips)} Chips</strong> · <strong>${(r.totals.netMoney>0?'+':'')}${euro(r.totals.netMoney)}</strong></div>
+        <div class="small" style="margin-top:6px">Top: <strong>${top?.name||'-'}</strong> (${top?.netMoney>0?'+':''}${euro(top?.netMoney)}) · Flop: <strong>${bottom?.name||'-'}</strong> (${bottom?.netMoney>0?'+':''}${euro(bottom?.netMoney)})</div>`;
+      timelineEl.appendChild(div);
+    });
+  }
+  function renderMyStats(){
+    if (state.role.kind!=='player' || !state.role.playerId){ statsHint.style.display=''; myStatsWrap.style.display='none'; return; }
+    const me=getPlayerById(state.role.playerId); if (!me){ statsHint.style.display=''; myStatsWrap.style.display='none'; return; }
+    let reb=0,netC=0,netM=0,wins=0,losses=0;
+    for (const r of state.rounds){ const e=r.entries.find(x=>x.playerId===me.id); if(!e) continue; reb+=e.rebuys; netC+=e.netChips; netM+=e.netMoney; if(e.netMoney>0) wins++; else if(e.netMoney<0) losses++; }
+    sRebuys.textContent=reb; sNetChips.textContent=(netC>0?'+':'')+fmtInt(netC);
+    sNetMoney.textContent=((netM>0?'+':'')+fmtMoney(netM));
+    sWins.textContent=wins; sLosses.textContent=losses;
+    statsHint.style.display='none'; myStatsWrap.style.display='';
+  }
+  function updateFinishRoundState(){
+    const everyonePaid = state.players.length>0 && state.players.every(p=>p.paid?.ok);
+    finishRoundBtn.disabled = !isAdminLike() || !everyonePaid;
+    finishRoundBtn.classList.toggle('lock', finishRoundBtn.disabled);
+  }
+  function renderPlayerTools(){
+    playerTools.style.display = (state.role.kind==='player') ? '' : 'none';
+    playerProfileSelect.innerHTML = '<option value="">— Profil wählen —</option>' +
+      state.players.map(p=>`<option value="${p.id}">${p.name||('ID '+p.id)}</option>`).join('');
+    if (state.role.playerId){ playerProfileSelect.value = String(state.role.playerId); }
+    const roleTxt = (state.role.kind==='player' && state.role.playerId) ?
+      `Spieler: ${getPlayerById(state.role.playerId)?.name||''}` :
+      (state.role.kind==='admin'?'Admin':state.role.kind==='bank'?'Bank':state.role.kind==='viewer'?'Viewer':'Spieler');
+    whoNow.textContent = roleTxt;
+  }
+  function renderAll(){
+    buyinEl.value=state.buyinChips; chipRateEl.value=state.chipRate; currencyEl.value=state.currency;
+    if (!state.roundName) state.roundName = todayStr()+' Homegame';
+    roundNameEl.value=state.roundName;
+    renderPlayerTools();
+    computeTotals(); renderRows(); renderTimeline(); fillHistoryFilter(); renderMyStats(); updateFinishRoundState();
+  }
 
-  // ---------- Finish Round ----------
-  const everyonePaid = ()=> state.players.length>0 && state.players.every(p=>p.paid?.ok);
-  function updateFinishRoundState(){ finishRoundBtn.disabled = !isAdminLike() || !everyonePaid(); finishRoundBtn.classList.toggle('lock', finishRoundBtn.disabled); }
-  function shuffleQuotes(){ buildQuotes(); } // re-mix ticker
-  function finalizeRound(){
-    if (!everyonePaid()){ alert('Noch nicht alle bezahlt.'); return; }
-    const name=(roundNameEl.value||`${todayStr()} Homegame`).trim();
+  /* ---------- ACTIONS ---------- */
+  document.querySelectorAll('.tabbar button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.tabbar button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  roleSelect.addEventListener('change', ()=>{
+    state.role.kind = roleSelect.value;
+    if (state.role.kind!=='player'){ state.role.playerId=null; }
+    save(); renderAll();
+  });
+  playerProfileSelect.addEventListener('change', ()=>{
+    const pid = Number(playerProfileSelect.value||0);
+    state.role.playerId = pid || null;
+    save(); renderAll();
+  });
+  function createProfile(){
+    const name = (newPlayerName.value||'').trim();
+    if (!name){ alert('Bitte Namen eingeben.'); return; }
+    if (getPlayerByName(name)){ alert('Name existiert bereits.'); return; }
+    const id = nextId(state.players);
+    state.players.push({id,name,rebuys:0,chips:0,paid:{ok:false}});
+    state.role.kind='player'; state.role.playerId=id;
+    newPlayerName.value='';
+    save(); renderAll();
+  }
+  createProfileBtn.addEventListener('click', createProfile);
+  newPlayerName.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); createProfile(); } });
+
+  addPlayerBtn.addEventListener('click', ()=>{
+    if(!isAdminLike()){ alert('Nur Admin/Bank kann Spieler hinzufügen.'); return; }
+    const name=(playerNameEl.value||'').trim(); if(!name) return;
+    if (getPlayerByName(name)){ alert('Name existiert bereits.'); return; }
+    state.players.push({id:nextId(state.players),name,rebuys:0,chips:0,paid:{ok:false}});
+    playerNameEl.value=''; save(); renderAll();
+  });
+
+  buyinEl.addEventListener('change', ()=>{ if(!isAdminLike()){ buyinEl.value=state.buyinChips; return; } state.buyinChips=Math.max(1,Math.floor(Number(buyinEl.value)||100)); save(); renderRows(); computeTotals(); });
+  chipRateEl.addEventListener('change', ()=>{ if(!isAdminLike()){ chipRateEl.value=state.chipRate; return; } const v=Number(chipRateEl.value); state.chipRate=isNaN(v)||v<0?0:v; save(); renderRows(); computeTotals(); });
+  currencyEl.addEventListener('change', ()=>{ if(!isAdminLike()){ currencyEl.value=state.currency; return; } state.currency=currencyEl.value||'€'; save(); renderRows(); computeTotals(); });
+  roundNameEl.addEventListener('input', ()=>{ if(!isAdminLike()) return; state.roundName=roundNameEl.value; save(); });
+
+  validateBtn.addEventListener('click', ()=>{
+    const totalBuyins=sum(state.players.map(p=>(1+clampInt(p.rebuys))*state.buyinChips));
+    const totalChips=sum(state.players.map(p=>clampInt(p.chips,0)));
+    const diff=totalChips-totalBuyins;
+    alert(diff===0?'✅ Konsistent: Summe Chips = Summe Buy-ins.':`⚠️ Abweichung: ${(diff>0?'+':'')}${diff} Chips.`);
+  });
+
+  finishRoundBtn.addEventListener('click', ()=>{
+    if (!isAdminLike()) return;
+    if (!state.players.length || !state.players.every(p=>p.paid?.ok)){ alert('Noch nicht alle bezahlt.'); return; }
     const entries=state.players.map(p=>{
       const rebuys=clampInt(p.rebuys), chips=clampInt(p.chips,0), buyinsTotal=(1+rebuys)*state.buyinChips, netChips=chips-buyinsTotal, netMoney=netChips*state.chipRate;
       return {playerId:p.id,name:p.name||('#'+p.id),rebuys,chips,netChips,netMoney};
     });
     const totals={rebuys:sum(entries.map(e=>e.rebuys)),buyins:sum(entries.map(e=>(1+e.rebuys)*state.buyinChips)),chips:sum(entries.map(e=>e.chips)),netChips:sum(entries.map(e=>e.netChips)),netMoney:sum(entries.map(e=>e.netMoney))};
-    state.rounds.push({id:nextId(state.rounds),name,date:Date.now(),buyinChips:state.buyinChips,chipRate:state.chipRate,currency:state.currency,entries,totals});
+    state.rounds.push({id:nextId(state.rounds),name:(state.roundName||todayStr()+' Homegame'),date:Date.now(),buyinChips:state.buyinChips,chipRate:state.chipRate,currency:state.currency,entries,totals});
     state.players.forEach(p=>{ p.paid={ok:false}; p.rebuys=0; p.chips=0; });
-    state.roundName = `${todayStr()} Homegame`;
-    save(); renderAll(); shuffleQuotes(); alert('✅ Runde gespeichert und zurückgesetzt. Quotes neu gemischt.');
-  }
-
-  // ---------- Role & Login / Register ----------
-  async function doRegister(role, name, pass){
-    if (role==='player'){
-      if(!name || !pass){ alert('Bitte Name & Passwort angeben.'); return; }
-      if (getPlayerByName(name)?.ph){ alert('Spieler existiert bereits. Bitte anderen Namen wählen.'); return; }
-      const p = getPlayerByName(name) || { id: nextId(state.players), name, rebuys:0, chips:0, paid:{ok:false}, ph:null, createdAt: Date.now() };
-      p.ph = await sha256(pass);
-      if (!getPlayerByName(name)) state.players.push(p);
-      save(); renderAll(); alert(`Registriert: Spieler „${name}“.`);
-    } else if (role==='admin' || role==='bank'){
-      if(!pass){ alert('Bitte eine PIN setzen.'); return; }
-      state.pins[role==='admin'?'admin':'bank'] = pass;
-      save(); alert(`${role}-PIN gesetzt.`);
-    } else {
-      alert('Viewer benötigt keine Registrierung.');
-    }
-  }
-  async function doLogin(role, name, pass){
-    if (role==='viewer'){ state.role={kind:'viewer',playerId:null}; save(); renderAll(); return true; }
-    if (role==='player'){
-      if (!name || !pass){ alert('Bitte Name & Passwort angeben.'); return false; }
-      const p = getPlayerByName(name);
-      if (!p){ alert('Unbekannter Spieler. Bitte registrieren.'); return false; }
-      const hash = await sha256(pass);
-      if (p.ph && p.ph!==hash){ alert('Falsches Passwort.'); return false; }
-      if (!p.ph){ p.ph = hash; }
-      state.role={kind:'player',playerId:p.id}; save(); renderAll(); return true;
-    }
-    if (role==='admin' || role==='bank'){
-      if (!pass){ alert('Bitte PIN eingeben.'); return false; }
-      const key=(role==='admin'?'admin':'bank');
-      if (!state.pins[key]){ alert(`Keine ${role}-PIN gesetzt. Bitte zuerst registrieren.`); return false; }
-      if (state.pins[key] !== pass){ alert('Falsche PIN.'); return false; }
-      state.role={kind:role,playerId:null}; save(); renderAll(); return true;
-    }
-  }
-
-  // Header Login/Register + Enter Key
-  function bindEnterToLogin(inputs, handler){
-    inputs.forEach(el=> el.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); handler(); }}));
-  }
-  registerBtn.addEventListener('click', async ()=>{
-    const role=roleSelect.value;
-    const name=(playerLoginName.value||'').trim();
-    const pass=playerLoginPass.value||'';
-    await doRegister(role, name, pass);
-  });
-  async function headerLoginHandler(){
-    const role=roleSelect.value;
-    const name=(playerLoginName.value||'').trim();
-    const pass=playerLoginPass.value||'';
-    const ok = await doLogin(role, name, pass);
-    if (ok) { const ss=$('startscreen'); if (!ss.hidden) ss.hidden=true; }
-  }
-  loginBtn.addEventListener('click', headerLoginHandler);
-  bindEnterToLogin([roleSelect, playerLoginName, playerLoginPass], headerLoginHandler);
-  logoutBtn.addEventListener('click', ()=>{ state.role={kind:'viewer',playerId:null}; save(); renderAll(); });
-
-  // ---------- Inputs & Buttons ----------
-  buyinEl.addEventListener('change', ()=>{ if(!isAdminLike()){ buyinEl.value=state.buyinChips; return; } state.buyinChips=Math.max(1,Math.floor(Number(buyinEl.value)||100)); save(); renderRows(); computeTotals(); });
-  chipRateEl.addEventListener('change', ()=>{ if(!isAdminLike()){ chipRateEl.value=state.chipRate; return; } const v=Number(chipRateEl.value); state.chipRate=isNaN(v)||v<0?0:v; save(); renderRows(); computeTotals(); });
-  currencyEl.addEventListener('change', ()=>{ if(!isAdminLike()){ currencyEl.value=state.currency; return; } state.currency=currencyEl.value||'€'; save(); renderRows(); computeTotals(); });
-  roundNameEl.addEventListener('input', ()=>{ if(!isAdminLike()) return; state.roundName=roundNameEl.value; save(); });
-  finishRoundBtn.addEventListener('click', ()=>{ if(!isAdminLike()) return; finalizeRound(); });
-
-  addPlayerBtn.addEventListener('click', ()=>{
-    if(!isAdminLike()){ alert('Nur Admin/Bank kann Spieler hinzufügen.'); return; }
-    const name=(playerNameEl.value||'').trim(); const id=nextId(state.players);
-    state.players.push({id,name,rebuys:0,chips:0,paid:{ok:false},ph:null,createdAt:Date.now()}); playerNameEl.value=''; save(); renderAll();
-  });
-
-  validateBtn.addEventListener('click', ()=>{
-    const sumBuyins=sum(state.players.map(p=>(1+clampInt(p.rebuys))*state.buyinChips)), sumChips=sum(state.players.map(p=>clampInt(p.chips,0))), diff=sumChips-sumBuyins;
-    if (diff===0) alert('✅ Konsistenz: Summe Chips = Summe Buy-ins.'); else alert(`⚠️ Abweichung: ${(diff>0?'+':'')}${diff} Chips.`);
+    state.roundName = todayStr()+' Homegame';
+    save(); renderAll(); buildQuotes(true); alert('✅ Runde gespeichert & zurückgesetzt. Quotes neu gemischt.');
   });
 
   exportBtn.addEventListener('click', ()=>{
-    const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); const stamp=new Date().toISOString().slice(0,19).replace(/[:T]/g,'-'); a.href=url; a.download=`poker-ledger-v2-${stamp}.json`; a.click(); URL.revokeObjectURL(url);
+    const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob); const a=document.createElement('a');
+    a.href=url; a.download=`poker-ledger-v5-${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.json`;
+    a.click(); URL.revokeObjectURL(url);
   });
   importBtn.addEventListener('click', ()=>importFile.click());
   importFile.addEventListener('change', async (e)=>{
-    const file=e.target.files?.[0]; if(!file) return; const text=await file.text();
-    try{
-      const data=JSON.parse(text); if(!data||typeof data!=='object') throw new Error('Ungültige Datei');
-      state.buyinChips=Math.max(1,Math.floor(Number(data.buyinChips)||100)); state.chipRate=(data.chipRate===0||data.chipRate)?Number(data.chipRate):0.05; state.currency=data.currency||'€'; state.roundName=data.roundName||'';
-      state.players=Array.isArray(data.players)?data.players.map(p=>({id:Number(p.id)||nextId(state.players),name:(p.name||'').toString(),rebuys:clampInt(p.rebuys,0),chips:clampInt(p.chips,0),paid:p.paid&&typeof p.paid==='object'?{ok:!!p.paid.ok,by:p.paid.by||'',at:p.paid.at||Date.now()}:{ok:false},ph:p.ph||null,createdAt:p.createdAt||Date.now()})):[];
-      state.rounds=Array.isArray(data.rounds)?data.rounds:[]; state.pins=data.pins&&typeof data.pins==='object'?data.pins:state.pins; state.role={kind:'viewer',playerId:null}; save(); renderAll();
-    }catch(err){ alert('Import fehlgeschlagen: '+err.message); } finally{ e.target.value=''; }
+    const f=e.target.files?.[0]; if(!f) return; const text=await f.text();
+    try{ const data=JSON.parse(text); if(!data||typeof data!=='object') throw new Error('Ungültige Datei'); Object.assign(state,data); save(); renderAll(); }
+    catch(err){ alert('Import fehlgeschlagen: '+err.message); } finally{ e.target.value=''; }
   });
-
-  // Delete all: needs Admin + Bank PINs
   resetBtn.addEventListener('click', ()=>{
     if(!isAdminLike()){ alert('Nur Admin oder Bank kann das anstoßen.'); return; }
-    if(!confirm('Sicher? Zum Löschen müssen Admin- und Bank-PIN bestätigt werden.')) return;
-    if(!state.pins.admin || !state.pins.bank){ alert('Bitte zuerst beide PINs setzen (Registrieren/Anmelden).'); return; }
-    const a=prompt('Admin-PIN:'); if(a!==state.pins.admin){ alert('Admin-PIN falsch.'); return; }
-    const b=prompt('Bank-PIN:'); if(b!==state.pins.bank){ alert('Bank-PIN falsch.'); return; }
-    if(!confirm('Letzte Bestätigung: Wirklich ALLES löschen (Spieler, Timeline, Einstellungen, PINs)?')) return;
-    localStorage.removeItem('poker-ledger-v2');
-    state.buyinChips=100; state.chipRate=0.05; state.currency='€'; state.roundName=''; state.players=[]; state.rounds=[]; state.role={kind:'viewer',playerId:null}; state.pins={admin:null,bank:null};
-    save(); renderAll(); alert('✅ Alles wurde gelöscht.');
+    if(!confirm('Sicher? Zum Löschen müssen Admin und Bank zustimmen.')) return;
+    const bank = prompt('Bank-Zustimmung (Tippe „bank“):'); if((bank||'').toLowerCase()!=='bank'){ alert('Bank-Zustimmung fehlt.'); return; }
+    const admin = prompt('Admin-Zustimmung (Tippe „admin“):'); if((admin||'').toLowerCase()!=='admin'){ alert('Admin-Zustimmung fehlt.'); return; }
+    if(!confirm('Letzte Bestätigung: Wirklich ALLES löschen?')) return;
+    localStorage.removeItem('poker-ledger-v5'); location.reload();
   });
 
-  // ---------- Startscreen ----------
-  const ss=$('startscreen'), startBg=$('startBg'), enterBtn=$('enterBtn');
-  const startRole=$('startRole'), startName=$('startName'), startPass=$('startPass'), startLogin=$('startLogin'), startRegister=$('startRegister');
-
-  function showStart(){ ss.hidden=false; }
-  function hideStart(){ ss.hidden=true; }
-
-  // Unsplash Hintergrund auf Startscreen
-  function applyStartBg(){
-    const url = "https://images.unsplash.com/photo-1541849548-216549ae2160?auto=format&fit=crop&w=1920&q=80";
-    startBg.style.backgroundImage = `url('${url}')`;
-  }
-
-  // Startscreen Buttons
-  enterBtn.addEventListener('click', hideStart);
-  startRegister.addEventListener('click', async ()=>{
-    const role=startRole.value, nm=(startName.value||'').trim(), pw=startPass.value||'';
-    await doRegister(role, nm, pw);
-  });
-  async function startLoginHandler(){
-    const role=startRole.value, nm=(startName.value||'').trim(), pw=startPass.value||'';
-    const ok = await doLogin(role, nm, pw);
-    if (ok) hideStart();
-  }
-  startLogin.addEventListener('click', startLoginHandler);
-  [startRole,startName,startPass].forEach(el=>el.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); startLoginHandler(); }}));
-
-  // ---------- Quotes ----------
-  const authors = [
+  /* ---------- QUOTES (unter der Tabelle) ---------- */
+  const authorsRaw = [
     "S. Harvey","Steve Harvey","Stephan Harvey","Steve H.","Stephan H.","Stephan \"Steve\" Harvey",
     "The Host from Familiy Feud","A dedicated game show host","Steve the Gambling Man",
     "A man with a very prominent mustache","S. H.","Steve (not from Minecraft)"
   ];
+  // Normalisierung: Steve/Stephan -> Kurzform
+  const normAuthor = a => /^steve\b/i.test(a) ? "Steve H." : (/^stephan\b/i.test(a) ? "Stephan H." : a);
+
   const quotes = [
     "Give me six hours to chop down a tree, and I will spend the first four at the blackjack table.",
     "A journey of a thousand miles begins with a single chip.",
@@ -689,52 +535,81 @@
     "If I had four hours to cut down a tree, I’d spend the first three at the craps table.",
     "Gamble like there’s no tomorrow… because after this hand, there might not be."
   ];
-  function buildQuotes(){
-    const shuffled = quotes.map(q=>({q,r:Math.random()})).sort((a,b)=>a.r-b.r).map(x=>x.q);
-    quotesTrack.innerHTML='';
-    for (let k=0;k<2;k++){
-      shuffled.forEach(q=>{
-        const a = authors[Math.floor(Math.random()*authors.length)];
-        const span=document.createElement('span'); span.className='quote'; span.innerHTML=`“${q}” <span class="author">— ${a}</span>`;
-        quotesTrack.appendChild(span);
-      });
+
+  // Erzeuge einen Autoren-Stream, in dem in JEDEM Zyklus jeder Name genau 2x vorkommt
+  function buildAuthorStream(targetLength){
+    const names = authorsRaw.map(normAuthor);
+    const twoEach = [];
+    names.forEach(n=>{ twoEach.push(n,n); }); // genau 2x je Name
+    const stream = [];
+    while(stream.length < targetLength){
+      // pro Zyklus: zufällig mischen, aber jeder Name 2x
+      const chunk = [...twoEach].map(x=>({x, r:Math.random()})).sort((a,b)=>a.r-b.r).map(o=>o.x);
+      stream.push(...chunk);
     }
+    return stream.slice(0,targetLength);
   }
 
-  // ---------- INIT ----------
-  load();
-  seedDefaultsIfMissing().then(()=>{
-    if (!state.roundName) state.roundName = `${todayStr()} Homegame`;
-    if (state.players.length===0){
-      state.players.push({ id:1, name:'Player A', rebuys:0, chips:80,  paid:{ok:false}, ph:null, createdAt:Date.now() });
-      state.players.push({ id:2, name:'Player B', rebuys:0, chips:120, paid:{ok:false}, ph:null, createdAt:Date.now() });
+  function fillTrack(el, items){
+    el.innerHTML='';
+    // doppelt füllen für nahtlosen Endloslauf
+    const all = items.concat(items);
+    all.forEach(({text,author})=>{
+      const span=document.createElement('span');
+      span.className='quote '+(Math.random()<0.5?'gold':'white');
+      span.innerHTML=`“${text}” <span class="author">— ${author}</span>`;
+      el.appendChild(span);
+    });
+  }
+
+  function buildQuotes(remix=false){
+    const t1=$('quotesTrack1'), t2=$('quotesTrack2'), t3=$('quotesTrack3');
+    if (remix){ t1.innerHTML=t2.innerHTML=t3.innerHTML=''; }
+    // Quote-Liste mischen
+    const shuffled = quotes.map(q=>({q,r:Math.random()})).sort((a,b)=>a.r-b.r).map(o=>o.q);
+    // wir bauen genug Elemente (z.B. 60) mit Namensrotation
+    const totalPerBuild = Math.max(60, shuffled.length); // >= Anzahl Quotes
+    const authorStream = buildAuthorStream(totalPerBuild);
+    const items = [];
+    for(let i=0;i<totalPerBuild;i++){
+      items.push({ text: shuffled[i % shuffled.length], author: authorStream[i] });
     }
-    applyBackground();
-    applyStartBg();
-    renderAll();
-    buildQuotes();
-    showStart(); // Startscreen sichtbar – Login/Enter schließen ihn
+    // gleichmäßig auf 3 Zeilen verteilen
+    const line1 = items.filter((_,i)=> i%3===0);
+    const line2 = items.filter((_,i)=> i%3===1);
+    const line3 = items.filter((_,i)=> i%3===2);
+    fillTrack(t1, line1); fillTrack(t2, line2); fillTrack(t3, line3);
+  }
+
+  /* ---------- INIT ---------- */
+  load();
+  if (state.players.length===0){
+    state.players.push({id:1,name:'Player A',rebuys:0,chips:80,paid:{ok:false}});
+    state.players.push({id:2,name:'Player B',rebuys:0,chips:120,paid:{ok:false}});
+  }
+  if (!state.roundName) state.roundName = todayStr()+' Homegame';
+
+  document.querySelectorAll('.tabbar button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.tabbar button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+    });
   });
 
-  // History filter
+  function updateFinishRoundState(){
+    const everyonePaid = state.players.length>0 && state.players.every(p=>p.paid?.ok);
+    finishRoundBtn.disabled = !isAdminLike() || !everyonePaid;
+    finishRoundBtn.classList.toggle('lock', finishRoundBtn.disabled);
+  }
+
   historyFilter.addEventListener('change', renderTimeline);
   clearFilter.addEventListener('click', ()=>{ historyFilter.value=''; renderTimeline(); });
 
-  // Alles löschen: Admin + Bank PIN
-  const resetBtn=$('resetBtn');
-  resetBtn.addEventListener('click', ()=>{
-    if(!isAdminLike()){ alert('Nur Admin oder Bank kann das anstoßen.'); return; }
-    if(!confirm('Sicher? Zum Löschen müssen Admin- und Bank-PIN bestätigt werden.')) return;
-    if(!state.pins.admin || !state.pins.bank){ alert('Bitte zuerst beide PINs setzen (Registrieren/Anmelden).'); return; }
-    const a=prompt('Admin-PIN:'); if(a!==state.pins.admin){ alert('Admin-PIN falsch.'); return; }
-    const b=prompt('Bank-PIN:'); if(b!==state.pins.bank){ alert('Bank-PIN falsch.'); return; }
-    if(!confirm('Letzte Bestätigung: Wirklich ALLES löschen (Spieler, Timeline, Einstellungen, PINs)?')) return;
-    localStorage.removeItem('poker-ledger-v2');
-    state.buyinChips=100; state.chipRate=0.05; state.currency='€'; state.roundName=''; state.players=[]; state.rounds=[]; state.role={kind:'viewer',playerId:null}; state.pins={admin:null,bank:null};
-    save(); renderAll(); alert('✅ Alles wurde gelöscht.');
-  });
-
-})();
+  buildQuotes(true);       // Zitate unten füllen
+  renderAll();             // App zeichnen
+});
 </script>
 </body>
 </html>
