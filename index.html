@@ -25,20 +25,26 @@
   .pill{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;display:flex;gap:10px;align-items:center}
   .controls{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
   .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:auto}
-  table{width:100%;border-collapse:collapse;min-width:1020px}
-  th,td{padding:12px 14px;border-bottom:1px solid var(--border)}
-  th{font-size:13px;color:var(--muted);background:rgba(0,0,0,.25);position:sticky;top:0}
+  table{width:100%;border-collapse:collapse;min-width:1120px}
+  th,td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+  th{font-size:13px;color:var(--muted);background:rgba(0,0,0,.25);position:sticky;top:0;white-space:nowrap}
   td input{width:100%;text-align:right}
   td.name-cell input{text-align:left}
   .right{text-align:right}.center{text-align:center}.muted{color:var(--muted)}
   .green{color:var(--ok)} .red{color:var(--bad)}
-  .badge{padding:4px 8px;border-radius:999px;border:1px solid var(--border);font-size:12px;background:rgba(0,0,0,.2)}
+  .badge{padding:4px 8px;border-radius:999px;border:1px solid var(--border);font-size:12px;background:rgba(0,0,0,.2);white-space:nowrap}
   .badge.ok{border-color:var(--ok);color:var(--ok)}
   .panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px}
   .timeline{display:flex;flex-direction:column;gap:10px;max-height:60vh;overflow:auto}
   .round-item{border:1px solid var(--border);border-radius:10px;padding:10px;background:rgba(0,0,0,.15)}
   .grid{display:grid;grid-template-columns:1fr 2fr;gap:12px}
   @media(max-width:960px){.grid{grid-template-columns:1fr}}
+
+  /* Mehr Platz & kein Umbruch für Netto/Status */
+  td.cell-net, td.cell-money, td.cell-status { white-space:nowrap }
+  th.w-net   { min-width:140px }
+  th.w-money { min-width:160px }
+  th.w-stat  { min-width:150px }
 
   /* Hintergrund: Schwarz/Rot Pokerbild + Overlays */
   .bg{
@@ -65,8 +71,8 @@
   .quotes-row{overflow:hidden;white-space:nowrap;margin:22px 0}
   .quotes-track{
     position:relative; left:-100%;
-    display:flex; gap:200px; /* viel horizontaler Abstand */
-    animation:marquee-ltr 480s linear infinite; /* sehr langsam */
+    display:flex; gap:200px;
+    animation:marquee-ltr 480s linear infinite;
     will-change:transform;
   }
   .quote{
@@ -153,9 +159,9 @@
             <th class="right">Rebuys</th>
             <th class="right">Buy-ins gesamt (Chips)</th>
             <th class="right">Aktuelle Chips</th>
-            <th class="right">Netto (Chips)</th>
-            <th class="right">Netto (Geld)</th>
-            <th class="center">Status</th>
+            <th class="right w-net">Netto (Chips)</th>
+            <th class="right w-money">Netto (Geld)</th>
+            <th class="center w-stat">Status</th>
             <th class="right">Aktionen</th>
           </tr>
         </thead>
@@ -225,10 +231,11 @@ document.addEventListener('DOMContentLoaded', () => {
     players: [],
     rounds: [],
     role: { kind:'player', playerId:null }, // Start als Spieler
+    dealerTips: 0 // unsichtbar, nur für Konsistenz
   };
 
-  const save = ()=> localStorage.setItem('poker-ledger-v5', JSON.stringify(state));
-  const load = ()=> { try{ Object.assign(state, JSON.parse(localStorage.getItem('poker-ledger-v5')||'{}')); }catch{} };
+  const save = ()=> localStorage.setItem('poker-ledger-v6', JSON.stringify(state));
+  const load = ()=> { try{ Object.assign(state, JSON.parse(localStorage.getItem('poker-ledger-v6')||'{}')); }catch{} };
 
   /* ---------- HELPERS ---------- */
   const clampInt = (v, min=0)=> Math.max(min, Math.floor(Number(v)||0));
@@ -289,16 +296,16 @@ document.addEventListener('DOMContentLoaded', () => {
       <td class="right"><input data-k="rebuys" type="number" min="0" step="1" value="${rebuys}" ${editable?'':'disabled'}></td>
       <td class="right"><span data-k="buyinsText" class="muted">${fmtInt(buyinsTotal)} Chips</span></td>
       <td class="right"><input data-k="chips" type="number" min="0" step="1" value="${chips}" ${editable?'':'disabled'}></td>
-      <td class="right"><strong data-k="netChips" class="${netChips>0?'green':(netChips<0?'red':'')}">${netChips>0?'+':''}${fmtInt(netChips)}</strong></td>
-      <td class="right"><strong data-k="netMoney" class="${netMoney>0?'green':(netMoney<0?'red':'')}">${netMoney>0?'+':''}${fmtMoney(netMoney)}</strong></td>
-      <td class="center">
-        <label class="muted" style="font-size:12px">
+      <td class="right cell-net"><strong data-k="netChips" class="${netChips>0?'green':(netChips<0?'red':'')}">${netChips>0?'+':''}${fmtInt(netChips)}</strong></td>
+      <td class="right cell-money"><strong data-k="netMoney" class="${netMoney>0?'green':(netMoney<0?'red':'')}">${netMoney>0?'+':''}${fmtMoney(netMoney)}</strong></td>
+      <td class="center cell-status">
+        <label class="muted" style="font-size:12px;white-space:nowrap">
           <input type="checkbox" data-k="paid" ${p.paid?.ok?'checked':''} ${canConfirmPayment()?'':'disabled'}>
           ${status}
         </label>
-        <div class="muted" data-k="paidMeta" style="font-size:12px">${p.paid?.by? `by ${p.paid.by} · ${new Date(p.paid.at).toLocaleString('de-DE')}`:''}</div>
       </td>
       <td class="right">
+        <button class="ghost small" data-action="tip" ${editable?'':'disabled'} title="Abrunden & Dealer tippen">💰 Abrunden</button>
         <button class="ghost small" data-action="rebuy" ${editable?'':'disabled'}>+ Rebuy</button>
         <button class="ghost small" data-action="delete" ${isAdminLike()?'':'disabled'}>Remove</button>
       </td>`;
@@ -311,7 +318,6 @@ document.addEventListener('DOMContentLoaded', () => {
       tr.querySelector('[data-k="buyinsText"]').textContent=`${fmtInt(buyinsTotal)} Chips`;
       const nc=tr.querySelector('[data-k="netChips"]'); nc.textContent=`${netChips>0?'+':''}${fmtInt(netChips)}`; nc.className=(netChips>0?'green':(netChips<0?'red':''));
       const nm=tr.querySelector('[data-k="netMoney"]'); nm.textContent=`${netMoney>0?'+':''}${fmtMoney(netMoney)}`; nm.className=(netMoney>0?'green':(netMoney<0?'red':''));
-      tr.querySelector('[data-k="paidMeta"]').textContent = p.paid?.by ? `by ${p.paid.by} · ${new Date(p.paid.at).toLocaleString('de-DE')}` : '';
     };
     tr.querySelectorAll('input').forEach(inp=>{
       inp.addEventListener('input', ()=>{
@@ -337,6 +343,31 @@ document.addEventListener('DOMContentLoaded', () => {
       if (removedMine){ state.role.playerId=null; }
       save(); renderAll();
     });
+
+    // 💰 Abrunden (Dealer-Tip)
+    tr.querySelector('[data-action="tip"]').addEventListener('click', ()=>{
+      if (!!p.paid?.ok) return; if (!(isMine||isAdminLike())) return;
+      const rebuys=clampInt(p.rebuys);
+      const buyinsTotal=(1+rebuys)*state.buyinChips;
+      const chips=clampInt(p.chips,0);
+      const netChips=chips-buyinsTotal;
+      const netMoney=netChips*state.chipRate;
+      if (netMoney <= 0){ alert('Nichts zum Abrunden – Netto ist nicht positiv.'); return; }
+
+      const target = Math.floor(netMoney); // abrunden auf glatten Eurobetrag
+      const need = netMoney - target;      // Betrag, der „weggetippt“ wird
+      if (need <= 0.0001){ alert('Schon glatt.'); return; }
+
+      let tipChips = Math.ceil(need / state.chipRate); // ganze Chips
+      tipChips = Math.min(tipChips, p.chips);          // Sicherheit
+      if (tipChips <= 0){ alert('Kein Chip verfügbar.'); return; }
+
+      p.chips = p.chips - tipChips;
+      state.dealerTips += tipChips;
+
+      save(); updateDerived(); computeTotals(); updateFinishRoundState();
+    });
+
     updateDerived();
   }
   function renderRows(){
@@ -431,7 +462,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!name){ alert('Bitte Namen eingeben.'); return; }
     if (getPlayerByName(name)){ alert('Name existiert bereits.'); return; }
     const id = nextId(state.players);
-    state.players.push({id,name,rebuys:0,chips:0,paid:{ok:false}});
+    state.players.push({id,name,rebuys:0,chips:100,paid:{ok:false}}); // Start mit 100 Chips
     state.role.kind='player'; state.role.playerId=id;
     newPlayerName.value='';
     save(); renderAll();
@@ -443,7 +474,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if(!isAdminLike()){ alert('Nur Admin/Bank kann Spieler hinzufügen.'); return; }
     const name=(playerNameEl.value||'').trim(); if(!name) return;
     if (getPlayerByName(name)){ alert('Name existiert bereits.'); return; }
-    state.players.push({id:nextId(state.players),name,rebuys:0,chips:0,paid:{ok:false}});
+    state.players.push({id:nextId(state.players),name,rebuys:0,chips:100,paid:{ok:false}}); // Start mit 100 Chips
     playerNameEl.value=''; save(); renderAll();
   });
 
@@ -455,8 +486,8 @@ document.addEventListener('DOMContentLoaded', () => {
   validateBtn.addEventListener('click', ()=>{
     const totalBuyins=sum(state.players.map(p=>(1+clampInt(p.rebuys))*state.buyinChips));
     const totalChips=sum(state.players.map(p=>clampInt(p.chips,0)));
-    const diff=totalChips-totalBuyins;
-    alert(diff===0?'✅ Konsistent: Summe Chips = Summe Buy-ins.':`⚠️ Abweichung: ${(diff>0?'+':'')}${diff} Chips.`);
+    const diffAdj = (totalChips + (state.dealerTips||0)) - totalBuyins;
+    alert(diffAdj===0?'✅ Konsistent (inkl. Dealer-Tips).':`⚠️ Abweichung (inkl. Dealer-Tips): ${(diffAdj>0?'+':'')}${diffAdj} Chips.`);
   });
 
   finishRoundBtn.addEventListener('click', ()=>{
@@ -468,7 +499,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     const totals={rebuys:sum(entries.map(e=>e.rebuys)),buyins:sum(entries.map(e=>(1+e.rebuys)*state.buyinChips)),chips:sum(entries.map(e=>e.chips)),netChips:sum(entries.map(e=>e.netChips)),netMoney:sum(entries.map(e=>e.netMoney))};
     state.rounds.push({id:nextId(state.rounds),name:(state.roundName||todayStr()+' Homegame'),date:Date.now(),buyinChips:state.buyinChips,chipRate:state.chipRate,currency:state.currency,entries,totals});
-    state.players.forEach(p=>{ p.paid={ok:false}; p.rebuys=0; p.chips=0; });
+    // Reset für neue Runde
+    state.players.forEach(p=>{ p.paid={ok:false}; p.rebuys=0; p.chips=100; }); // neue Runde wieder mit 100 starten
+    state.dealerTips = 0; // Tips zurücksetzen
     state.roundName = todayStr()+' Homegame';
     save(); renderAll(); buildQuotes(true); alert('✅ Runde gespeichert & zurückgesetzt. Quotes neu gemischt.');
   });
@@ -476,7 +509,7 @@ document.addEventListener('DOMContentLoaded', () => {
   exportBtn.addEventListener('click', ()=>{
     const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
     const url=URL.createObjectURL(blob); const a=document.createElement('a');
-    a.href=url; a.download=`poker-ledger-v5-${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.json`;
+    a.href=url; a.download=`poker-ledger-v6-${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.json`;
     a.click(); URL.revokeObjectURL(url);
   });
   importBtn.addEventListener('click', ()=>importFile.click());
@@ -491,7 +524,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const bank = prompt('Bank-Zustimmung (Tippe „bank“):'); if((bank||'').toLowerCase()!=='bank'){ alert('Bank-Zustimmung fehlt.'); return; }
     const admin = prompt('Admin-Zustimmung (Tippe „admin“):'); if((admin||'').toLowerCase()!=='admin'){ alert('Admin-Zustimmung fehlt.'); return; }
     if(!confirm('Letzte Bestätigung: Wirklich ALLES löschen?')) return;
-    localStorage.removeItem('poker-ledger-v5'); location.reload();
+    localStorage.removeItem('poker-ledger-v6'); location.reload();
   });
 
   /* ---------- QUOTES (unter der Tabelle) ---------- */
@@ -500,9 +533,7 @@ document.addEventListener('DOMContentLoaded', () => {
     "The Host from Familiy Feud","A dedicated game show host","Steve the Gambling Man",
     "A man with a very prominent mustache","S. H.","Steve (not from Minecraft)"
   ];
-  // Normalisierung: Steve/Stephan -> Kurzform
   const normAuthor = a => /^steve\b/i.test(a) ? "Steve H." : (/^stephan\b/i.test(a) ? "Stephan H." : a);
-
   const quotes = [
     "Give me six hours to chop down a tree, and I will spend the first four at the blackjack table.",
     "A journey of a thousand miles begins with a single chip.",
@@ -536,14 +567,11 @@ document.addEventListener('DOMContentLoaded', () => {
     "Gamble like there’s no tomorrow… because after this hand, there might not be."
   ];
 
-  // Erzeuge einen Autoren-Stream, in dem in JEDEM Zyklus jeder Name genau 2x vorkommt
   function buildAuthorStream(targetLength){
     const names = authorsRaw.map(normAuthor);
-    const twoEach = [];
-    names.forEach(n=>{ twoEach.push(n,n); }); // genau 2x je Name
+    const twoEach = []; names.forEach(n=>{ twoEach.push(n,n); });
     const stream = [];
     while(stream.length < targetLength){
-      // pro Zyklus: zufällig mischen, aber jeder Name 2x
       const chunk = [...twoEach].map(x=>({x, r:Math.random()})).sort((a,b)=>a.r-b.r).map(o=>o.x);
       stream.push(...chunk);
     }
@@ -552,8 +580,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function fillTrack(el, items){
     el.innerHTML='';
-    // doppelt füllen für nahtlosen Endloslauf
-    const all = items.concat(items);
+    const all = items.concat(items); // doppelt für nahtlosen Lauf
     all.forEach(({text,author})=>{
       const span=document.createElement('span');
       span.className='quote '+(Math.random()<0.5?'gold':'white');
@@ -565,16 +592,13 @@ document.addEventListener('DOMContentLoaded', () => {
   function buildQuotes(remix=false){
     const t1=$('quotesTrack1'), t2=$('quotesTrack2'), t3=$('quotesTrack3');
     if (remix){ t1.innerHTML=t2.innerHTML=t3.innerHTML=''; }
-    // Quote-Liste mischen
     const shuffled = quotes.map(q=>({q,r:Math.random()})).sort((a,b)=>a.r-b.r).map(o=>o.q);
-    // wir bauen genug Elemente (z.B. 60) mit Namensrotation
-    const totalPerBuild = Math.max(60, shuffled.length); // >= Anzahl Quotes
+    const totalPerBuild = Math.max(60, shuffled.length);
     const authorStream = buildAuthorStream(totalPerBuild);
     const items = [];
     for(let i=0;i<totalPerBuild;i++){
       items.push({ text: shuffled[i % shuffled.length], author: authorStream[i] });
     }
-    // gleichmäßig auf 3 Zeilen verteilen
     const line1 = items.filter((_,i)=> i%3===0);
     const line2 = items.filter((_,i)=> i%3===1);
     const line3 = items.filter((_,i)=> i%3===2);
@@ -584,8 +608,8 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ---------- INIT ---------- */
   load();
   if (state.players.length===0){
-    state.players.push({id:1,name:'Player A',rebuys:0,chips:80,paid:{ok:false}});
-    state.players.push({id:2,name:'Player B',rebuys:0,chips:120,paid:{ok:false}});
+    state.players.push({id:1,name:'Player A',rebuys:0,chips:100,paid:{ok:false}});
+    state.players.push({id:2,name:'Player B',rebuys:0,chips:100,paid:{ok:false}});
   }
   if (!state.roundName) state.roundName = todayStr()+' Homegame';
 
@@ -607,8 +631,8 @@ document.addEventListener('DOMContentLoaded', () => {
   historyFilter.addEventListener('change', renderTimeline);
   clearFilter.addEventListener('click', ()=>{ historyFilter.value=''; renderTimeline(); });
 
-  buildQuotes(true);       // Zitate unten füllen
-  renderAll();             // App zeichnen
+  buildQuotes(true);
+  renderAll();
 });
 </script>
 </body>
