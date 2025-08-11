@@ -1,0 +1,630 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Poker Ledger – Login, Rollen & stabile Eingaben</title>
+<style>
+  :root{
+    --bg:#0f1216; --card:#171b22; --muted:#8a94a6; --text:#e8ecf1;
+    --accent:#4ea7ff; --ok:#28c76f; --warn:#ff9f43; --bad:#ff4d4f;
+    --border:#242b35; --chip:#6fd3ff;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f5f7fb; --card:#ffffff; --muted:#5b6678; --text:#111827;
+           --accent:#2563eb; --ok:#16a34a; --warn:#d97706; --bad:#dc2626; --border:#e5e7eb; --chip:#0891b2; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:500 16px/1.4 system-ui,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
+  header{padding:16px 20px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+  header h1{font-size:18px;margin:0;letter-spacing:.2px}
+  .pill{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;display:flex;gap:10px;align-items:center}
+  .pill label{font-size:13px;color:var(--muted)}
+  .pill input[type="number"], .pill select{width:110px}
+  input,button,select{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+  button{cursor:pointer}
+  button.accent{background:var(--accent);border-color:transparent;color:white}
+  button.ghost{background:transparent}
+  main{padding:20px;max-width:1200px;margin:0 auto}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:auto}
+  table{width:100%;border-collapse:collapse;min-width:940px}
+  th,td{padding:12px 14px;border-bottom:1px solid var(--border);text-align:left;vertical-align:middle}
+  th{font-size:13px;color:var(--muted);font-weight:600;position:sticky;top:0;background:var(--card);z-index:1}
+  td input{width:100%;text-align:right}
+  td.name-cell input{text-align:left}
+  .right{text-align:right}
+  .muted{color:var(--muted)}
+  .green{color:var(--ok);font-variant-numeric:tabular-nums}
+  .red{color:var(--bad);font-variant-numeric:tabular-nums}
+  .warn{color:var(--warn)}
+  .chip{font-weight:700;color:var(--chip)}
+  tfoot td{background:rgba(0,0,0,.03)}
+  .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px}
+  .stat .k{font-size:12px;color:var(--muted)}
+  .stat .v{font-size:18px;font-weight:700;margin-top:4px}
+  .badge{padding:4px 8px;border-radius:999px;border:1px solid var(--border);font-size:12px}
+  .badge.ok{border-color:var(--ok);color:var(--ok)}
+  .badge.bad{border-color:var(--bad);color:var(--bad)}
+  .small{font-size:12px}
+  .row-actions{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+  .danger{background:transparent;border-color:var(--bad);color:var(--bad)}
+  .success{background:transparent;border-color:var(--ok);color:var(--ok)}
+  .role{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .role .who{font-weight:700}
+  .paid-flag{display:inline-flex;align-items:center;gap:6px}
+  .paid-flag input{width:auto}
+  .lock{opacity:.6;pointer-events:none}
+  .footer-note{margin-top:12px;color:var(--muted);font-size:13px}
+  @media (max-width:900px){ .stats{grid-template-columns:repeat(2,1fr)} }
+</style>
+</head>
+<body>
+<header>
+  <h1>🃏 Poker Ledger</h1>
+
+  <div class="pill">
+    <label for="buyin">Buy-in (Chips):</label>
+    <input id="buyin" type="number" min="1" step="1" value="100" />
+    <span class="muted small">Start + Rebuys</span>
+  </div>
+
+  <div class="pill">
+    <label>1 Chip =</label>
+    <input id="chipRate" type="number" min="0" step="0.01" value="1">
+    <select id="currency" style="width:80px">
+      <option value="€" selected>€</option>
+      <option value="$">$</option>
+      <option value="CHF">CHF</option>
+    </select>
+  </div>
+
+  <div class="pill role" style="gap:6px">
+    <span class="muted small">Rolle:</span>
+    <select id="roleSelect">
+      <option value="viewer">Viewer</option>
+      <option value="player">Spieler</option>
+      <option value="bank">Bank</option>
+      <option value="admin">Admin</option>
+    </select>
+
+    <!-- Player login -->
+    <input id="playerLoginName" placeholder="Name" style="display:none; width:150px">
+    <input id="playerLoginPass" type="password" placeholder="Passwort" style="display:none; width:150px">
+
+    <!-- Admin/Bank PIN -->
+    <input id="pinInput" type="password" placeholder="PIN" style="display:none; width:120px" />
+
+    <button id="loginBtn">Anmelden</button>
+    <button id="logoutBtn" class="ghost">Abmelden</button>
+    <span class="muted small">Aktuell: <span class="who" id="whoNow">Viewer</span></span>
+  </div>
+</header>
+
+<main>
+  <div class="controls">
+    <input id="playerName" placeholder="Spielername hinzufügen… (nur Admin)" />
+    <button class="accent" id="addPlayer">+ Spieler</button>
+    <button id="validate">Konsistenz prüfen</button>
+    <div class="spacer" style="flex:1"></div>
+    <button id="exportBtn" class="success">Export</button>
+    <button id="importBtn">Import</button>
+    <input id="importFile" type="file" accept="application/json" style="display:none">
+    <button id="resetBtn" class="danger">Alles löschen</button>
+  </div>
+
+  <div class="table-wrap">
+    <table id="ledger">
+      <thead>
+        <tr>
+          <th style="width:26px">#</th>
+          <th>Spieler</th>
+          <th class="right">Rebuys</th>
+          <th class="right">Buy-ins gesamt (Chips)</th>
+          <th class="right">Aktuelle Chips</th>
+          <th class="right">Netto (Chips)</th>
+          <th class="right">Netto (Geld)</th>
+          <th class="right">Zahlung</th>
+          <th class="right">Aktionen</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2"><span class="muted small">Summe</span></td>
+          <td class="right"><span id="sumRebuys" class="badge"></span></td>
+          <td class="right"><span id="sumBuyins" class="badge"></span></td>
+          <td class="right"><span id="sumChips" class="badge"></span></td>
+          <td class="right"><span id="sumNet" class="badge"></span></td>
+          <td class="right"><span id="sumNetMoney" class="badge"></span></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="k">Spieler</div><div class="v" id="statPlayers">0</div></div>
+    <div class="stat"><div class="k">Chips im Umlauf (soll)</div><div class="v chip" id="statChipsSoll">0</div></div>
+    <div class="stat"><div class="k">Chips erfasst (ist)</div><div class="v chip" id="statChipsIst">0</div></div>
+    <div class="stat"><div class="k">Abweichung</div><div class="v" id="statDiff">0</div></div>
+  </div>
+
+  <p class="footer-note">
+    Rollen & Rechte: Admin (volle Rechte), Bank (nur Auszahlungen/Einzahlungen bestätigen), Spieler (nur eigene Zeile).<br/>
+    Spieler-Login speichert Name + Passwort lokal (für Wiederkehrer). Netto (Geld) = Netto (Chips) × (1 Chip in €).
+  </p>
+</main>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+
+  // --- State ---
+  const state = {
+    buyinChips: 100,
+    chipRate: 1,          // € pro Chip
+    currency: "€",
+    players: [],          // {id,name,rebuys,chips,paid:{...}, ph: 'sha256', createdAt}
+    role: { kind: 'viewer', playerId: null }, // viewer | player | bank | admin
+    pins: { admin: null, bank: null }         // simple soft-PINs
+  };
+
+  // --- Persistence ---
+  const save = () => localStorage.setItem('poker-ledger-roles', JSON.stringify(state));
+  const load = () => {
+    const raw = localStorage.getItem('poker-ledger-roles');
+    if (!raw) return;
+    try {
+      const s = JSON.parse(raw);
+      state.buyinChips = Number(s.buyinChips) || 100;
+      state.chipRate = Number(s.chipRate) >= 0 ? Number(s.chipRate) : 1;
+      state.currency = s.currency || "€";
+      state.players = Array.isArray(s.players) ? s.players : [];
+      state.role = s.role || {kind:'viewer', playerId:null};
+      state.pins = s.pins || {admin:null, bank:null};
+    } catch(e){ console.warn('Load error', e); }
+  };
+
+  // --- Helpers ---
+  const clampInt = (v, min=0) => Math.max(min, Math.floor(Number(v)||0));
+  const sum = arr => arr.reduce((a,b)=>a+b,0);
+  const fmtInt = n => (Number(n)||0).toLocaleString('de-DE', { maximumFractionDigits:0 });
+  const fmtMoney = n => {
+    const num = Number(n)||0;
+    const opts = { minimumFractionDigits:2, maximumFractionDigits:2 };
+    return `${num.toLocaleString('de-DE', opts)} ${state.currency}`;
+  };
+  const whoName = () => {
+    if (state.role.kind==='admin') return 'Admin';
+    if (state.role.kind==='bank') return 'Bank';
+    if (state.role.kind==='player') {
+      const p = getPlayerById(state.role.playerId);
+      return p? `Spieler: ${p.name||('ID '+p.id)}` : 'Spieler';
+    }
+    return 'Viewer';
+  };
+  const nextId = () => Math.max(0, ...state.players.map(p=>p.id||0)) + 1;
+  const sha256 = async (text) => {
+    if (window.crypto?.subtle) {
+      const enc = new TextEncoder().encode(text);
+      const buf = await crypto.subtle.digest('SHA-256', enc);
+      return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+    }
+    // Fallback (unsicher, aber besser als nichts)
+    let h = 0; for (let i=0;i<text.length;i++){ h = (h<<5) - h + text.charCodeAt(i); h|=0; }
+    return 'x'+Math.abs(h);
+  };
+
+  const getPlayerById = (id) => state.players.find(p=>p.id===id);
+  const getPlayerByName = (name) => state.players.find(p=> (p.name||'').toLowerCase() === (name||'').toLowerCase());
+
+  // --- UI refs ---
+  const buyinEl = $('buyin');
+  const chipRateEl = $('chipRate');
+  const currencyEl = $('currency');
+
+  const playerNameEl = $('playerName');
+  const addPlayerBtn = $('addPlayer');
+  const validateBtn = $('validate');
+
+  const exportBtn = $('exportBtn');
+  const importBtn = $('importBtn');
+  const importFile = $('importFile');
+  const resetBtn = $('resetBtn');
+  const rowsTbody = $('rows');
+
+  const roleSelect = $('roleSelect');
+  const pinInput = $('pinInput');
+  const playerLoginName = $('playerLoginName');
+  const playerLoginPass = $('playerLoginPass');
+  const loginBtn = $('loginBtn');
+  const logoutBtn = $('logoutBtn');
+  const whoNow = $('whoNow');
+
+  // --- Rendering / without losing focus ---
+  function renderHeaderAndStats() {
+    buyinEl.value = state.buyinChips;
+    chipRateEl.value = state.chipRate;
+    currencyEl.value = state.currency;
+
+    const lockGlobal = !(state.role.kind==='admin');
+    [buyinEl, chipRateEl, currencyEl, playerNameEl, addPlayerBtn, resetBtn].forEach(el=>{
+      if (!el) return;
+      el.disabled = lockGlobal ? (el===validateBtn?false:true) : false;
+      el.classList.toggle('lock', lockGlobal && el!==validateBtn);
+    });
+
+    whoNow.textContent = whoName();
+
+    // Show/hide login inputs
+    const role = roleSelect.value;
+    playerLoginName.style.display = role==='player' ? '' : 'none';
+    playerLoginPass.style.display = role==='player' ? '' : 'none';
+    pinInput.style.display = (role==='admin'||role==='bank') ? '' : 'none';
+  }
+
+  function computeTotals() {
+    const totals = state.players.map(p=>{
+      const rebuys = clampInt(p.rebuys);
+      const buyinsTotal = (1 + rebuys) * state.buyinChips;
+      const chips = clampInt(p.chips,0);
+      const net = chips - buyinsTotal;
+      return {rebuys, buyinsTotal, chips, net};
+    });
+    const sumRebuys = sum(totals.map(t=>t.rebuys));
+    const sumBuyins = sum(totals.map(t=>t.buyinsTotal));
+    const sumChips = sum(totals.map(t=>t.chips));
+    const sumNet = sum(totals.map(t=>t.net));
+    const sumNetMoney = sumNet * state.chipRate;
+    const diff = sumChips - sumBuyins;
+
+    $('sumRebuys').textContent = `${sumRebuys}`;
+    $('sumBuyins').textContent = `${fmtInt(sumBuyins)} Chips`;
+    $('sumChips').textContent = `${fmtInt(sumChips)} Chips`;
+    $('sumNet').textContent = (sumNet>0?'+':'') + fmtInt(sumNet) + ' Chips';
+    $('sumNet').className = 'badge ' + (sumNet===0?'':(sumNet>0?'ok':'bad'));
+    $('sumNetMoney').textContent = (sumNetMoney>0?'+':'') + fmtMoney(sumNetMoney);
+
+    $('statPlayers').textContent = state.players.length;
+    $('statChipsSoll').textContent = fmtInt(sumBuyins);
+    $('statChipsIst').textContent = fmtInt(sumChips);
+    $('statDiff').textContent = (diff>0?'+':'') + fmtInt(diff);
+    $('sumBuyins').className = 'badge ' + (diff===0?'ok':'bad');
+    $('sumChips').className = 'badge ' + (diff===0?'ok':'bad');
+  }
+
+  function rowHtml(p, idx) {
+    const rebuys = clampInt(p.rebuys);
+    const buyinsTotal = (1 + rebuys) * state.buyinChips;
+    const chips = clampInt(p.chips, 0);
+    const netChips = chips - buyinsTotal;
+    const netMoney = netChips * state.chipRate;
+    const isMine = canEditRow(p.id);
+
+    return `
+      <td class="muted small">${idx+1}</td>
+      <td class="name-cell">
+        <input data-k="name" value="${escapeHtml(p.name ?? '')}" placeholder="Name" ${isMine || canEditGlobal() ? '' : 'disabled'}>
+      </td>
+      <td class="right">
+        <input data-k="rebuys" type="number" min="0" step="1" value="${rebuys}" ${isMine ? '' : (canEditGlobal()?'':'disabled')}>
+      </td>
+      <td class="right"><span class="muted" data-k="buyinsText">${fmtInt(buyinsTotal)} Chips</span></td>
+      <td class="right">
+        <input data-k="chips" type="number" min="0" step="1" value="${chips}" ${isMine ? '' : (canEditGlobal()?'':'disabled')}>
+      </td>
+      <td class="right"><strong data-k="netChips" class="${netChips===0?'':(netChips>0?'green':'red')}">${netChips>0?'+':''}${fmtInt(netChips)}</strong></td>
+      <td class="right"><strong data-k="netMoney" class="${netMoney===0?'':(netMoney>0?'green':'red')}">${netMoney>0?'+':''}${fmtMoney(netMoney)}</strong></td>
+      <td class="right">
+        <span class="paid-flag">
+          <input type="checkbox" data-k="paid" ${p.paid?.ok ? 'checked' : ''} ${canConfirmPayment() ? '' : 'disabled'}>
+          <label class="small">${p.paid?.ok ? 'bestätigt' : 'offen'}</label>
+        </span>
+        <div class="small muted" data-k="paidMeta">${p.paid?.by ? `von ${p.paid.by} · ${new Date(p.paid.at).toLocaleString('de-DE')}`:''}</div>
+      </td>
+      <td class="right">
+        <div class="row-actions">
+          <button class="ghost small" data-action="rebuy" ${isMine || canEditGlobal() ? '' : 'disabled'}>+ Rebuy</button>
+          <button class="ghost small" data-action="delete" ${canEditGlobal() ? '' : 'disabled'}>Entfernen</button>
+        </div>
+      </td>
+    `;
+  }
+
+  function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
+
+  function attachRowHandlers(tr, p) {
+    const isMine = canEditRow(p.id);
+
+    const updateDerived = () => {
+      const rebuys = clampInt(p.rebuys);
+      const buyinsTotal = (1 + rebuys) * state.buyinChips;
+      const chips = clampInt(p.chips,0);
+      const netChips = chips - buyinsTotal;
+      const netMoney = netChips * state.chipRate;
+
+      const buyinsText = tr.querySelector('[data-k="buyinsText"]');
+      const netChipsEl = tr.querySelector('[data-k="netChips"]');
+      const netMoneyEl = tr.querySelector('[data-k="netMoney"]');
+      const paidMeta = tr.querySelector('[data-k="paidMeta"]');
+
+      if (buyinsText) buyinsText.textContent = `${fmtInt(buyinsTotal)} Chips`;
+      if (netChipsEl) {
+        netChipsEl.textContent = `${netChips>0?'+':''}${fmtInt(netChips)}`;
+        netChipsEl.className = netChips===0?'':(netChips>0?'green':'red');
+      }
+      if (netMoneyEl) {
+        netMoneyEl.textContent = `${netMoney>0?'+':''}${fmtMoney(netMoney)}`;
+        netMoneyEl.className = netMoney===0?'':(netMoney>0?'green':'red');
+      }
+      if (paidMeta) paidMeta.textContent = p.paid?.by ? `von ${p.paid.by} · ${new Date(p.paid.at).toLocaleString('de-DE')}` : '';
+    };
+
+    // Inputs: update state live, but DO NOT re-render whole table
+    tr.querySelectorAll('input').forEach(inp=>{
+      inp.addEventListener('input', () => {
+        const k = inp.dataset.k;
+        if (k==='name') {
+          if (!(isMine || canEditGlobal())) { inp.value = p.name||''; return; }
+          p.name = inp.value; // volle Namen möglich
+        }
+        if (k==='rebuys') {
+          if (!(isMine || canEditGlobal())) { inp.value = p.rebuys||0; return; }
+          p.rebuys = clampInt(inp.value, 0);
+        }
+        if (k==='chips') {
+          if (!(isMine || canEditGlobal())) { inp.value = p.chips||0; return; }
+          p.chips = clampInt(inp.value, 0);
+        }
+        if (k==='paid') {
+          if (!canConfirmPayment()) { inp.checked = !!p.paid?.ok; return; }
+          const ok = inp.checked;
+          p.paid = ok ? { ok:true, by: state.role.kind==='admin'?'Admin':'Bank', at: Date.now() } : { ok:false };
+        }
+        save();
+        updateDerived();
+        computeTotals();
+      });
+
+      // On blur: normalize values (optional)
+      inp.addEventListener('change', () => {
+        save();
+        updateDerived();
+        computeTotals();
+      });
+    });
+
+    // Buttons
+    const rebuyBtn = tr.querySelector('[data-action="rebuy"]');
+    if (rebuyBtn) rebuyBtn.addEventListener('click', ()=>{
+      if (!(isMine || canEditGlobal())) return;
+      p.rebuys = clampInt((p.rebuys||0) + 1, 0);
+      const rebuysInput = tr.querySelector('input[data-k="rebuys"]');
+      if (rebuysInput) rebuysInput.value = p.rebuys;
+      save(); 
+      updateDerived(); 
+      computeTotals();
+    });
+
+    const delBtn = tr.querySelector('[data-action="delete"]');
+    if (delBtn) delBtn.addEventListener('click', ()=>{
+      if (!canEditGlobal()) return;
+      if (!confirm(`Spieler „${p.name||('#'+p.id)}“ entfernen?`)) return;
+      state.players = state.players.filter(x=>x.id!==p.id);
+      if (state.role.kind==='player' && state.role.playerId===p.id) {
+        state.role = {kind:'viewer', playerId:null};
+      }
+      save(); 
+      renderAll();
+    });
+
+    // First draw of derived cells
+    updateDerived();
+  }
+
+  function renderRows() {
+    rowsTbody.innerHTML = '';
+    state.players.forEach((p, idx) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = rowHtml(p, idx);
+      rowsTbody.appendChild(tr);
+      attachRowHandlers(tr, p);
+    });
+  }
+
+  function renderAll() {
+    renderHeaderAndStats();
+    renderRows();
+    computeTotals();
+  }
+
+  // --- Permissions ---
+  const canEditGlobal = () => state.role.kind==='admin';
+  const canConfirmPayment = () => state.role.kind==='bank' || state.role.kind==='admin';
+  const canEditRow = (playerId) => {
+    if (state.role.kind==='admin') return true;
+    if (state.role.kind==='player') return state.role.playerId === playerId;
+    return false;
+  };
+
+  // --- Role/Login handling ---
+  function ensurePins() {
+    if (state.pins.admin===null) state.pins.admin = '';
+    if (state.pins.bank===null) state.pins.bank = '';
+  }
+
+  roleSelect.addEventListener('change', ()=>{
+    renderHeaderAndStats();
+  });
+
+  loginBtn.addEventListener('click', async ()=>{
+    const sel = roleSelect.value;
+    if (sel==='viewer') {
+      state.role = {kind:'viewer', playerId:null};
+      save(); renderAll(); return;
+    }
+    if (sel==='player') {
+      const name = (playerLoginName.value||'').trim();
+      const pass = playerLoginPass.value||'';
+      if (!name || !pass) { alert('Bitte Name und Passwort eingeben.'); return; }
+      const hash = await sha256(pass);
+
+      let p = getPlayerByName(name);
+      if (!p) {
+        // Konto anlegen
+        const id = nextId();
+        p = { id, name, rebuys:0, chips:0, paid:{ok:false}, ph: hash, createdAt: Date.now() };
+        state.players.push(p);
+        alert(`Konto angelegt für „${name}“.`);
+      } else {
+        // Konto prüfen
+        if (p.ph && p.ph !== hash) { alert('Falsches Passwort.'); return; }
+        if (!p.ph) {
+          // Altdaten ohne Passwort: erstes Login setzt Passwort
+          p.ph = hash;
+          alert('Passwort gesetzt.');
+        }
+      }
+      state.role = {kind:'player', playerId: p.id};
+      save(); renderAll(); 
+      playerLoginPass.value='';
+      return;
+    }
+    if (sel==='admin' || sel==='bank') {
+      ensurePins();
+      const pin = (pinInput.value || '');
+      const target = sel==='admin' ? 'admin' : 'bank';
+      if (!state.pins[target]) {
+        if (!pin) { alert(`Erster Login als ${sel}: Wähle eine PIN und gib sie ein.`); return; }
+        if (!confirm(`${sel}-PIN setzen?`)) return;
+        state.pins[target] = pin;
+        alert(`${sel}-PIN gesetzt.`);
+      } else {
+        if (state.pins[target] !== pin) {
+          alert('Falsche PIN.');
+          return;
+        }
+      }
+      state.role = {kind: sel, playerId: null};
+      pinInput.value = '';
+      save(); renderAll();
+    }
+  });
+
+  logoutBtn.addEventListener('click', ()=>{
+    state.role = {kind:'viewer', playerId:null};
+    save(); renderAll();
+  });
+
+  // --- Global inputs (no full rerender while typing) ---
+  buyinEl.addEventListener('change', ()=>{
+    if (!canEditGlobal()) { buyinEl.value = state.buyinChips; return; }
+    state.buyinChips = Math.max(1, Math.floor(Number(buyinEl.value)||100));
+    save(); computeTotals(); renderRows(); // rows need derived updates
+  });
+  chipRateEl.addEventListener('change', ()=>{
+    if (!canEditGlobal()) { chipRateEl.value = state.chipRate; return; }
+    const v = Number(chipRateEl.value);
+    state.chipRate = isNaN(v) || v<0 ? 0 : v;
+    save(); computeTotals(); renderRows();
+  });
+  currencyEl.addEventListener('change', ()=>{
+    if (!canEditGlobal()) { currencyEl.value = state.currency; return; }
+    state.currency = currencyEl.value || '€';
+    save(); computeTotals(); renderRows();
+  });
+
+  // --- Row management ---
+  $('addPlayer').addEventListener('click', ()=>{
+    if (!canEditGlobal()) { alert('Nur Admin kann Spieler hinzufügen.'); return; }
+    const name = (playerNameEl.value || '').trim();
+    const id = nextId();
+    state.players.push({ id, name, rebuys:0, chips:0, paid:{ ok:false }, ph: null, createdAt: Date.now() });
+    playerNameEl.value = '';
+    save(); renderAll();
+  });
+
+  $('validate').addEventListener('click', ()=>{
+    const totals = state.players.map(p => ({
+      buyinsTotal: (1 + clampInt(p.rebuys)) * state.buyinChips,
+      chips: clampInt(p.chips,0)
+    }));
+    const sumBuyins = sum(totals.map(t=>t.buyinsTotal));
+    const sumChips = sum(totals.map(t=>t.chips));
+    const diff = sumChips - sumBuyins;
+    if (diff === 0) {
+      alert('✅ Konsistenzcheck: OK – Summe Chips = Summe Buy-ins.');
+    } else {
+      const sign = diff>0?'+':'';
+      alert(`⚠️ Abweichung: ${sign}${diff} Chips. Prüft bitte die Eingaben (Chips oder Rebuys).`);
+    }
+  });
+
+  // Export / Import / Reset
+  exportBtn.addEventListener('click', ()=>{
+    const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const stamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+    a.href = url;
+    a.download = `poker-ledger-${stamp}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+  importBtn.addEventListener('click', ()=> importFile.click());
+  importFile.addEventListener('change', async (e)=>{
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const text = await file.text();
+    try{
+      const data = JSON.parse(text);
+      if (!data || typeof data!=='object') throw new Error('Ungültige Datei');
+      state.buyinChips = Math.max(1, Math.floor(Number(data.buyinChips)||100));
+      state.chipRate = Number(data.chipRate) >= 0 ? Number(data.chipRate) : 1;
+      state.currency = data.currency || '€';
+      state.players = Array.isArray(data.players) ? data.players.map(p=>({
+        id: Number(p.id)||nextId(),
+        name: (p.name||'').toString(),
+        rebuys: clampInt(p.rebuys,0),
+        chips: clampInt(p.chips,0),
+        paid: p.paid && typeof p.paid==='object' ? { ok: !!p.paid.ok, by: p.paid.by||'', at: p.paid.at||Date.now() } : { ok:false },
+        ph: p.ph || null,
+        createdAt: p.createdAt || Date.now()
+      })) : [];
+      state.pins = data.pins && typeof data.pins==='object' ? data.pins : state.pins;
+      state.role = {kind:'viewer', playerId:null};
+      save(); renderAll();
+    }catch(err){
+      alert('Import fehlgeschlagen: ' + err.message);
+    } finally {
+      e.target.value = '';
+    }
+  });
+
+  resetBtn.addEventListener('click', ()=>{
+    if (!canEditGlobal()) { alert('Nur Admin kann alles löschen.'); return; }
+    if (!confirm('Wirklich alles löschen (Spieler, Einstellungen, PINs)?')) return;
+    localStorage.removeItem('poker-ledger-roles');
+    state.buyinChips = 100;
+    state.chipRate = 1;
+    state.currency = '€';
+    state.players = [];
+    state.role = {kind:'viewer', playerId:null};
+    state.pins = {admin:null, bank:null};
+    save(); renderAll();
+  });
+
+  // Init
+  load(); 
+  if (state.players.length === 0) {
+    state.players.push({ id:1, name:'Spieler A', rebuys:0, chips:80,  paid:{ok:false}, ph:null, createdAt:Date.now() });
+    state.players.push({ id:2, name:'Spieler B', rebuys:0, chips:120, paid:{ok:false}, ph:null, createdAt:Date.now() });
+  }
+  renderAll();
+})();
+</script>
+</body>
+</html>
