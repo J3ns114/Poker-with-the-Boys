@@ -3,50 +3,43 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Poker Ledger ♠♥♦♣</title>
+<title>Poker Ledger – Runden, Profile & Timeline</title>
 <style>
   :root{
-    --bg:#0b0d10; --card:rgba(18,22,28,.86); --muted:#9aa3b2; --text:#eef2f7;
-    --accent:#e11d48; --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444;
-    --border:rgba(255,255,255,.08); --gold:#ffcc66; --chip:#6fd3ff;
+    --bg:#0e1116; --card:#151a21; --muted:#8fa1b3; --text:#eaf0f6;
+    --accent:#d61f45; --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444;
+    --border:#232a35; --gold:#f5bf62; --chip:#5fc7ff;
   }
   *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0;color:var(--text);font:500 16px/1.4 system-ui,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
-    /* Hintergrund: eingebettetes WebP + dunkles Overlay + dezentes Muster */
-    --bgimg:url('data:image/webp;base64,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');
-    background-image: linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.65)), var(--bgimg);
-    background-size: cover; background-position: center; background-attachment: fixed;
-  }
-  header{padding:16px 20px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);backdrop-filter:saturate(120%) blur(4px);background:linear-gradient( to bottom, rgba(0,0,0,.55), rgba(0,0,0,.35) );}
-  header h1{font-size:18px;margin:0;letter-spacing:.2px}
+  body{margin:0;background:var(--bg);color:var(--text);font:500 16px/1.45 system-ui,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
+  a{color:var(--chip);text-decoration:none}
+  header{padding:12px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);backdrop-filter:saturate(120%) blur(4px);background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.15))}
+  h1{font-size:18px;margin:0}
+  input,button,select{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+  button{cursor:pointer}
+  button.accent{background:linear-gradient(180deg,#f43f5e,#b91c1c);border-color:transparent;color:#fff;box-shadow:0 6px 18px rgba(244,63,94,.25)}
+  button.ghost{background:transparent}
+  .tabbar{display:flex;gap:8px}
+  .tabbar button{padding:8px 12px}
+  .tabbar .active{background:var(--accent);border-color:transparent}
+  main{padding:16px;max-width:1260px;margin:0 auto}
+  .row{display:flex;gap:12px;flex-wrap:wrap}
   .pill{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;display:flex;gap:10px;align-items:center}
   .pill label{font-size:13px;color:var(--muted)}
   .pill input[type="number"], .pill select{width:110px}
-  input,button,select{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
-  button{cursor:pointer}
-  button.accent{background:linear-gradient(180deg,#f43f5e,#b91c1c);border-color:transparent;color:white;box-shadow:0 6px 16px rgba(244,63,94,.25)}
-  button.ghost{background:transparent}
-  main{padding:20px;max-width:1200px;margin:0 auto}
-  .controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
-  .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:auto;box-shadow:0 12px 40px rgba(0,0,0,.35)}
-  table{width:100%;border-collapse:collapse;min-width:980px}
-  th,td{padding:12px 14px;border-bottom:1px solid var(--border);text-align:left;vertical-align:middle}
-  th{font-size:13px;color:var(--muted);font-weight:700;position:sticky;top:0;background:rgba(18,22,28,.92);z-index:1}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+  .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:auto;box-shadow:0 12px 30px rgba(0,0,0,.25)}
+  table{width:100%;border-collapse:collapse;min-width:1020px}
+  th,td{padding:12px 14px;border-bottom:1px solid var(--border)}
+  th{font-size:13px;color:var(--muted);font-weight:700;background:rgba(0,0,0,.25);position:sticky;top:0;z-index:1}
   td input{width:100%;text-align:right}
   td.name-cell input{text-align:left}
   .right{text-align:right}
+  .center{text-align:center}
   .muted{color:var(--muted)}
   .green{color:var(--ok);font-variant-numeric:tabular-nums}
   .red{color:var(--bad);font-variant-numeric:tabular-nums}
-  .warn{color:var(--warn)}
   .chip{font-weight:700;color:var(--chip)}
-  tfoot td{background:rgba(255,255,255,.02)}
-  .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}
-  .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px}
-  .stat .k{font-size:12px;color:var(--muted)}
-  .stat .v{font-size:18px;font-weight:700;margin-top:4px}
   .badge{padding:4px 8px;border-radius:999px;border:1px solid var(--border);font-size:12px;background:rgba(0,0,0,.2)}
   .badge.ok{border-color:var(--ok);color:var(--ok)}
   .badge.bad{border-color:var(--bad);color:var(--bad)}
@@ -54,433 +47,693 @@
   .row-actions{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
   .danger{background:transparent;border-color:var(--bad);color:var(--bad)}
   .success{background:transparent;border-color:var(--ok);color:var(--ok)}
-  .role{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .role .who{font-weight:700}
-  .paid-flag{display:inline-flex;align-items:center;gap:6px}
-  .paid-flag input{width:auto}
   .lock{opacity:.6;pointer-events:none}
-  .footer-note{margin-top:12px;color:var(--muted);font-size:13px;text-shadow:0 1px 0 rgba(0,0,0,.6)}
-  /* <<< WICHTIG: Breitere Netto-Spalten + kein Umbruch >>> */
-  td .nowrap{white-space:nowrap}
-  td .net-chips, td .net-money{display:inline-block;min-width:140px;text-align:right}
-  @media (max-width:980px){ .stats{grid-template-columns:repeat(2,1fr)} }
+  .nowrap{white-space:nowrap}
+  .net-chips,.net-money{display:inline-block;min-width:150px;text-align:right}
+  .panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px}
+  .timeline{display:flex;flex-direction:column;gap:10px;max-height:60vh;overflow:auto}
+  .round-item{border:1px solid var(--border);border-radius:10px;padding:10px;background:rgba(0,0,0,.15)}
+  .round-item .line{display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between}
+  .grid{display:grid;grid-template-columns:1fr 2fr;gap:12px}
+  @media (max-width:960px){.grid{grid-template-columns:1fr}}
+  /* Background image */
+  .bg-overlay{position:fixed;inset:0;pointer-events:none;z-index:-2}
+  /* Start/Login/Register screen */
+  .startscreen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#000;z-index:9999}
+  .start-bg{position:absolute;inset:0;background-position:center;background-size:cover;filter:brightness(.55);opacity:.95}
+  .start-card{position:relative;width:min(820px,92vw);background:rgba(14,17,22,.85);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.55)}
+  .start-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+  .start-title{font-size:22px}
+  .start-body{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .start-note{font-size:12px;color:var(--muted)}
+  .start-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  /* Tabs */
+  .tab{display:none}
+  .tab.active{display:block}
+  /* Quotes Ticker – poker look */
+  .quotes-wrap{position:fixed;left:0;right:0;bottom:0;overflow:hidden;border-top:1px solid var(--border);
+    background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.45));padding:8px 0;z-index:10}
+  .quotes-track{position:relative;left:-100%;display:flex;gap:40px;white-space:nowrap;will-change:transform;animation:marquee-ltr 48s linear infinite}
+  .quote{font-style:italic;color:var(--gold);background:rgba(255,255,255,.06);border:1px solid var(--border);padding:6px 12px;border-radius:999px;font-size:14px}
+  .quote .author{opacity:.9;color:#ffe2a6;margin-left:10px}
+  @keyframes marquee-ltr{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
 </style>
 </head>
 <body>
+<!-- Background (Unsplash – lizenzfrei) -->
+<div id="bg" class="bg-overlay"></div>
+
 <header>
   <h1>🃏 Poker Ledger <span style="color:var(--gold)">♠ ♥ ♦ ♣</span></h1>
-
-  <div class="pill">
-    <label for="buyin">Buy-in (Chips):</label>
-    <input id="buyin" type="number" min="1" step="1" value="100" />
-    <span class="muted small">Start + Rebuys</span>
+  <div class="tabbar">
+    <button data-tab="current" class="active">Aktuelle Runde</button>
+    <button data-tab="history">Verlauf</button>
   </div>
-
-  <div class="pill">
-    <label>1 Chip =</label>
-    <input id="chipRate" type="number" min="0" step="0.01" value="1">
-    <select id="currency" style="width:80px">
-      <option value="€" selected>€</option>
-      <option value="$">$</option>
-      <option value="CHF">CHF</option>
-    </select>
-  </div>
-
-  <div class="pill role" style="gap:6px">
-    <span class="muted small">Rolle:</span>
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+    <span class="small muted">Rolle:</span>
     <select id="roleSelect">
       <option value="viewer">Viewer</option>
-      <option value="player">Spieler</option>
+      <option value="player" selected>Spieler</option>
       <option value="bank">Bank</option>
       <option value="admin">Admin</option>
     </select>
-
-    <!-- Player login -->
-    <input id="playerLoginName" placeholder="Name" style="display:none; width:150px">
-    <input id="playerLoginPass" type="password" placeholder="Passwort" style="display:none; width:150px">
-
-    <!-- Admin/Bank PIN -->
-    <input id="pinInput" type="password" placeholder="PIN" style="display:none; width:120px" />
-
+    <input id="playerLoginName" placeholder="Name" style="width:150px">
+    <input id="playerLoginPass" type="password" placeholder="Passwort / PIN" style="width:150px">
+    <button id="registerBtn" class="ghost">Registrieren</button>
     <button id="loginBtn">Anmelden</button>
     <button id="logoutBtn" class="ghost">Abmelden</button>
-    <span class="muted small">Aktuell: <span class="who" id="whoNow">Viewer</span></span>
+    <span class="muted small">Aktuell: <strong id="whoNow">Viewer</strong></span>
   </div>
 </header>
 
 <main>
-  <div class="controls">
-    <input id="playerName" placeholder="Spielername hinzufügen… (nur Admin)" />
-    <button class="accent" id="addPlayer">+ Spieler</button>
-    <button id="validate">Konsistenz prüfen</button>
-    <div class="spacer" style="flex:1"></div>
-    <button id="exportBtn" class="success">Export</button>
-    <button id="importBtn">Import</button>
-    <input id="importFile" type="file" accept="application/json" style="display:none">
-    <button id="resetBtn" class="danger">Alles löschen</button>
-  </div>
+  <!-- TAB: Aktuelle Runde -->
+  <section id="tab-current" class="tab active">
+    <div class="row">
+      <div class="pill">
+        <label for="buyin">Buy-in (Chips):</label>
+        <input id="buyin" type="number" min="1" step="1" value="100" />
+      </div>
+      <div class="pill">
+        <label>1 Chip =</label>
+        <input id="chipRate" type="number" min="0" step="0.01" value="0.05">
+        <select id="currency" style="width:80px">
+          <option value="€" selected>€</option>
+          <option value="$">$</option>
+          <option value="CHF">CHF</option>
+        </select>
+      </div>
+      <div class="pill">
+        <label>Runde:</label>
+        <input id="roundName" placeholder="z. B. 11.08.2025 Homegame" style="width:220px">
+        <button id="finishRound" class="accent">Runde abschließen</button>
+      </div>
+    </div>
 
-  <div class="table-wrap">
-    <table id="ledger">
-      <thead>
-        <tr>
-          <th style="width:26px">#</th>
-          <th>Spieler</th>
-          <th class="right">Rebuys</th>
-          <th class="right">Buy-ins gesamt (Chips)</th>
-          <th class="right">Aktuelle Chips</th>
-          <th class="right">Netto (Chips)</th>
-          <th class="right">Netto (Geld)</th>
-          <th class="right">Zahlung</th>
-          <th class="right">Aktionen</th>
-        </tr>
-      </thead>
-      <tbody id="rows"></tbody>
-      <tfoot>
-        <tr>
-          <td colspan="2"><span class="muted small">Summe</span></td>
-          <td class="right"><span id="sumRebuys" class="badge"></span></td>
-          <td class="right"><span id="sumBuyins" class="badge"></span></td>
-          <td class="right"><span id="sumChips" class="badge"></span></td>
-          <td class="right"><span id="sumNet" class="badge"></span></td>
-          <td class="right"><span id="sumNetMoney" class="badge"></span></td>
-          <td></td>
-          <td></td>
-        </tr>
-      </tfoot>
-    </table>
-  </div>
+    <div class="controls">
+      <input id="playerName" placeholder="Spielername hinzufügen… (Admin/Bank)">
+      <button class="accent" id="addPlayer">+ Spieler</button>
+      <button id="validate">Konsistenz prüfen</button>
+      <div style="flex:1"></div>
+      <button id="exportBtn" class="success">Export</button>
+      <button id="importBtn">Import</button>
+      <input id="importFile" type="file" accept="application/json" style="display:none">
+      <button id="resetBtn" class="danger">Alles löschen</button>
+    </div>
 
-  <div class="stats">
-    <div class="stat"><div class="k">Spieler</div><div class="v" id="statPlayers">0</div></div>
-    <div class="stat"><div class="k">Chips im Umlauf (soll)</div><div class="v chip" id="statChipsSoll">0</div></div>
-    <div class="stat"><div class="k">Chips erfasst (ist)</div><div class="v chip" id="statChipsIst">0</div></div>
-    <div class="stat"><div class="k">Abweichung</div><div class="v" id="statDiff">0</div></div>
-  </div>
+    <div class="table-wrap">
+      <table id="ledger">
+        <thead>
+          <tr>
+            <th style="width:30px">#</th>
+            <th>Spieler</th>
+            <th class="right">Rebuys</th>
+            <th class="right">Buy-ins gesamt (Chips)</th>
+            <th class="right">Aktuelle Chips</th>
+            <th class="right">Netto (Chips)</th>
+            <th class="right">Netto (Geld)</th>
+            <th class="center">Status</th>
+            <th class="right">Aktionen</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="2"><span class="muted small">Summe</span></td>
+            <td class="right"><span id="sumRebuys" class="badge"></span></td>
+            <td class="right"><span id="sumBuyins" class="badge"></span></td>
+            <td class="right"><span id="sumChips" class="badge"></span></td>
+            <td class="right"><span id="sumNet" class="badge"></span></td>
+            <td class="right"><span id="sumNetMoney" class="badge"></span></td>
+            <td class="center"><span id="paidCount" class="badge"></span></td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </section>
 
-  <p class="footer-note">
-    Rollen & Rechte: Admin (volle Rechte), Bank (nur Auszahlungen/Einzahlungen bestätigen), Spieler (nur eigene Zeile).<br/>
-    Spieler-Login speichert Name + Passwort lokal (für Wiederkehrer). Netto (Geld) = Netto (Chips) × (1 Chip in €).
-  </p>
+  <!-- TAB: Verlauf -->
+  <section id="tab-history" class="tab">
+    <div class="grid">
+      <div class="panel">
+        <div class="row" style="justify-content:space-between;align-items:center">
+          <h3 style="margin:0">🕒 Verlauf</h3>
+          <div class="row">
+            <label class="small muted">Spielerfilter:</label>
+            <select id="historyFilter" style="min-width:180px"></select>
+            <button id="clearFilter" class="ghost">X</button>
+          </div>
+        </div>
+        <div id="timeline" class="timeline" style="margin-top:10px"></div>
+      </div>
+      <div class="panel">
+        <h3 style="margin-top:0">📊 Spieler-Stats</h3>
+        <div class="small muted" id="statsHint">Melde dich als Spieler an, um deine persönlichen Statistiken zu sehen.</div>
+        <div id="myStats" style="display:none">
+          <div>Gesamt Rebuys: <strong id="sRebuys">0</strong></div>
+          <div>Gesamt Netto (Chips): <strong id="sNetChips" class="chip">0</strong></div>
+          <div>Gesamt Netto (Geld): <strong id="sNetMoney">0,00 €</strong></div>
+          <div>Gewinn-Runden: <strong id="sWins">0</strong> &nbsp;·&nbsp; Verlust-Runden: <strong id="sLosses">0</strong></div>
+          <div class="small muted" style="margin-top:6px">Nur abgeschlossene Runden zählen in deine Stats.</div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
+
+<!-- Quotes ticker -->
+<div class="quotes-wrap"><div id="quotesTrack" class="quotes-track"></div></div>
+
+<!-- Start/Login/Register screen -->
+<div id="startscreen" class="startscreen">
+  <div id="startBg" class="start-bg"></div>
+  <div class="start-card">
+    <div class="start-head">
+      <div class="start-title">🃏 Poker Ledger</div>
+      <div class="start-actions">
+        <button id="enterBtn" class="accent">Enter App</button>
+      </div>
+    </div>
+    <div class="start-body">
+      <div>
+        <div class="pill" style="width:100%;margin-bottom:8px">
+          <span class="small muted">Rolle wählen & anmelden/registrieren:</span>
+        </div>
+        <div class="row" style="gap:8px;flex-wrap:wrap">
+          <select id="startRole">
+            <option value="player" selected>Spieler</option>
+            <option value="bank">Bank</option>
+            <option value="admin">Admin</option>
+            <option value="viewer">Viewer</option>
+          </select>
+          <input id="startName" placeholder="Name (bei Spieler)" value="spieler1">
+          <input id="startPass" type="password" placeholder="Passwort / PIN" value="1234">
+          <button id="startRegister" class="ghost">Registrieren</button>
+          <button id="startLogin" class="accent">Anmelden</button>
+        </div>
+        <p class="start-note">Sofort-Logins: <b>spieler1/1234</b>, <b>bank/bank123</b>, <b>admin/admin123</b>. Hintergrund ist ein lizenzfreies Pokerbild (Unsplash).</p>
+      </div>
+      <div class="start-note">
+        <p>Tipps:</p>
+        <ul>
+          <li>Standard: 1 Chip = 0.05 € • Buy-in = 100 Chips</li>
+          <li>„Paid“-Häkchen sperrt Eingaben (nur Bank/Admin setzen/entfernen).</li>
+          <li>Wenn alle bezahlt → „Runde abschließen“ speichert sie im Verlauf (Quotes werden neu gemischt).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 (() => {
   const $ = id => document.getElementById(id);
 
-  // --- State ---
+  // ---------- STATE ----------
   const state = {
     buyinChips: 100,
-    chipRate: 1,
+    chipRate: 0.05,
     currency: "€",
-    players: [],          // {id,name,rebuys,chips,paid:{ok,by,at}, ph:passHash, createdAt}
-    role: { kind: 'viewer', playerId: null }, // viewer | player | bank | admin
-    pins: { admin: null, bank: null }
+    roundName: "",
+    players: [],
+    rounds: [],
+    role: { kind: 'viewer', playerId: null },
+    pins: { admin: null, bank: null },
+    bg: 'unsplash' // flag only
   };
 
-  // --- Persistence ---
-  const save = () => localStorage.setItem('poker-ledger-roles', JSON.stringify(state));
+  // ---------- PERSISTENCE ----------
+  const save = () => localStorage.setItem('poker-ledger-v2', JSON.stringify(state));
   const load = () => {
-    const raw = localStorage.getItem('poker-ledger-roles');
+    const raw = localStorage.getItem('poker-ledger-v2');
     if (!raw) return;
     try {
       const s = JSON.parse(raw);
       state.buyinChips = Number(s.buyinChips) || 100;
-      state.chipRate = Number(s.chipRate) >= 0 ? Number(s.chipRate) : 1;
-      state.currency = s.currency || "€";
-      state.players = Array.isArray(s.players) ? s.players : [];
-      state.role = s.role || {kind:'viewer', playerId:null};
-      state.pins = s.pins || {admin:null, bank:null};
+      state.chipRate   = (s.chipRate===0||s.chipRate)? Number(s.chipRate) : 0.05;
+      state.currency   = s.currency || "€";
+      state.roundName  = s.roundName || "";
+      state.players    = Array.isArray(s.players) ? s.players : [];
+      state.rounds     = Array.isArray(s.rounds) ? s.rounds : [];
+      state.role       = s.role || {kind:'viewer', playerId:null};
+      state.pins       = s.pins || {admin:null, bank:null};
+      state.bg         = s.bg || 'unsplash';
     } catch(e){ console.warn('Load error', e); }
   };
 
-  // --- Helpers ---
+  // ---------- HELPERS ----------
   const clampInt = (v, min=0) => Math.max(min, Math.floor(Number(v)||0));
   const sum = arr => arr.reduce((a,b)=>a+b,0);
   const fmtInt = n => (Number(n)||0).toLocaleString('de-DE', { maximumFractionDigits:0 });
-  const fmtMoney = n => {
-    const num = Number(n)||0;
-    const opts = { minimumFractionDigits:2, maximumFractionDigits:2 };
-    return `${num.toLocaleString('de-DE', opts)} ${state.currency}`;
-  };
-  const whoName = () => {
-    if (state.role.kind==='admin') return 'Admin';
-    if (state.role.kind==='bank') return 'Bank';
-    if (state.role.kind==='player') {
-      const p = getPlayerById(state.role.playerId);
-      return p? `Spieler: ${p.name||('ID '+p.id)}` : 'Spieler';
-    }
-    return 'Viewer';
-  };
-  const nextId = () => Math.max(0, ...state.players.map(p=>p.id||0)) + 1;
+  const fmtMoney = n => `${(Number(n)||0).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})} ${state.currency}`;
+  const todayStr = () => new Date().toLocaleDateString('de-DE');
+  const nextId = list => Math.max(0, ...list.map(x=>x.id||0)) + 1;
+  const getPlayerById = id => state.players.find(p=>p.id===id);
+  const getPlayerByName = name => state.players.find(p=>(p.name||'').toLowerCase()===(name||'').toLowerCase());
+  const isAdminLike = () => state.role.kind==='admin' || state.role.kind==='bank';
+  const canConfirmPayment = () => isAdminLike();
+  const canEditRow = pid => isAdminLike() || (state.role.kind==='player' && state.role.playerId===pid);
   const sha256 = async (text) => {
     if (window.crypto?.subtle) {
       const enc = new TextEncoder().encode(text);
       const buf = await crypto.subtle.digest('SHA-256', enc);
       return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
     }
-    let h = 0; for (let i=0;i<text.length;i++){ h = (h<<5) - h + text.charCodeAt(i); h|=0; }
-    return 'x'+Math.abs(h);
+    let h=0; for (let i=0;i<text.length;i++){ h=(h<<5)-h+text.charCodeAt(i); h|=0; } return 'x'+Math.abs(h);
   };
-  const getPlayerById = (id) => state.players.find(p=>p.id===id);
-  const getPlayerByName = (name) => state.players.find(p=> (p.name||'').toLowerCase() === (name||'').toLowerCase());
-  const canEditGlobal = () => state.role.kind==='admin';
-  const canConfirmPayment = () => state.role.kind==='bank' || state.role.kind==='admin';
-  const canEditRow = (playerId) => state.role.kind==='admin' || (state.role.kind==='player' && state.role.playerId===playerId);
 
-  // --- UI refs ---
-  const buyinEl = $('buyin'), chipRateEl = $('chipRate'), currencyEl = $('currency');
-  const playerNameEl = $('playerName'); const addPlayerBtn = $('addPlayer'); const validateBtn = $('validate');
-  const exportBtn = $('exportBtn'); const importBtn = $('importBtn'); const importFile = $('importFile'); const resetBtn = $('resetBtn');
-  const rowsTbody = $('rows');
-  const roleSelect = $('roleSelect'); const pinInput = $('pinInput'); const playerLoginName = $('playerLoginName'); const playerLoginPass = $('playerLoginPass');
-  const loginBtn = $('loginBtn'); const logoutBtn = $('logoutBtn'); const whoNow = $('whoNow');
+  // ---------- UI REFS ----------
+  const buyinEl=$('buyin'), chipRateEl=$('chipRate'), currencyEl=$('currency'), roundNameEl=$('roundName'), finishRoundBtn=$('finishRound');
+  const playerNameEl=$('playerName'), addPlayerBtn=$('addPlayer'), validateBtn=$('validate');
+  const exportBtn=$('exportBtn'), importBtn=$('importBtn'), importFile=$('importFile'), resetBtn=$('resetBtn');
+  const rowsTbody=$('rows');
+  const roleSelect=$('roleSelect'), playerLoginName=$('playerLoginName'), playerLoginPass=$('playerLoginPass'), loginBtn=$('loginBtn'), logoutBtn=$('logoutBtn'), whoNow=$('whoNow'), registerBtn=$('registerBtn');
+  const paidCountEl=$('paidCount');
+  const timelineEl=$('timeline');
+  const historyFilter=$('historyFilter'), clearFilter=$('clearFilter');
+  const statsHint=$('statsHint'), myStatsWrap=$('myStats'), sRebuys=$('sRebuys'), sNetChips=$('sNetChips'), sNetMoney=$('sNetMoney'), sWins=$('sWins'), sLosses=$('sLosses');
+  const quotesTrack=$('quotesTrack');
 
-  // --- Render header/stats (no focus loss) ---
-  function renderHeaderAndStats() {
-    buyinEl.value = state.buyinChips;
-    chipRateEl.value = state.chipRate;
-    currencyEl.value = state.currency;
+  // Tabs
+  document.querySelectorAll('.tabbar button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.tabbar button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+    });
+  });
 
-    const lockGlobal = !(state.role.kind==='admin');
-    [buyinEl, chipRateEl, currencyEl, playerNameEl, addPlayerBtn, resetBtn].forEach(el=>{
-      if (!el) return;
-      el.disabled = lockGlobal ? (el===validateBtn?false:true) : false;
-      el.classList.toggle('lock', lockGlobal && el!==validateBtn);
+  // ---------- SEED DEFAULT ACCOUNTS ----------
+  async function seedDefaultsIfMissing(){
+    if (!state.pins.admin) state.pins.admin = 'admin123';
+    if (!state.pins.bank)  state.pins.bank  = 'bank123';
+    if (!getPlayerByName('spieler1')){
+      const id = nextId(state.players);
+      const ph = await sha256('1234');
+      state.players.push({ id, name:'spieler1', rebuys:0, chips:0, paid:{ok:false}, ph, createdAt:Date.now() });
+    }
+    save();
+  }
+
+  // ---------- RENDER ----------
+  function applyBackground(){
+    // Unsplash: generisches Pokerbild (Chips/Karten)
+    const url = "https://images.unsplash.com/photo-1541849548-216549ae2160?auto=format&fit=crop&w=1920&q=80";
+    $('bg').style.background = `linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.65)), url('${url}') center/cover no-repeat fixed`;
+  }
+
+  function whoName(){
+    if (state.role.kind==='admin') return 'Admin';
+    if (state.role.kind==='bank')  return 'Bank';
+    if (state.role.kind==='player'){ const p=getPlayerById(state.role.playerId); return p?`Spieler: ${p.name}`:'Spieler'; }
+    return 'Viewer';
+  }
+
+  function renderHeaderAndTotals(){
+    buyinEl.value=state.buyinChips; chipRateEl.value=state.chipRate; currencyEl.value=state.currency;
+    roundNameEl.value=state.roundName || `${todayStr()} Homegame`;
+
+    const lockGlobal = !isAdminLike();
+    [buyinEl,chipRateEl,currencyEl,playerNameEl,addPlayerBtn,resetBtn,finishRoundBtn,roundNameEl].forEach(el=>{
+      if(!el) return; el.disabled = lockGlobal ? (el===validateBtn?false:true) : false; el.classList.toggle('lock', lockGlobal && el!==validateBtn);
     });
 
     whoNow.textContent = whoName();
 
-    const role = roleSelect.value;
-    playerLoginName.style.display = role==='player' ? '' : 'none';
-    playerLoginPass.style.display = role==='player' ? '' : 'none';
-    pinInput.style.display = (role==='admin'||role==='bank') ? '' : 'none';
-
-    computeTotals();
+    computeTotals(); renderTimeline(); renderMyStats(); fillHistoryFilter(); updateFinishRoundState();
   }
 
-  function computeTotals() {
+  function computeTotals(){
     const totals = state.players.map(p=>{
-      const rebuys = clampInt(p.rebuys);
-      const buyinsTotal = (1 + rebuys) * state.buyinChips;
-      const chips = clampInt(p.chips,0);
-      const net = chips - buyinsTotal;
-      return {rebuys, buyinsTotal, chips, net};
+      const rebuys=clampInt(p.rebuys); const buyinsTotal=(1+rebuys)*state.buyinChips; const chips=clampInt(p.chips,0); const net=chips-buyinsTotal;
+      return {rebuys,buyinsTotal,chips,net,paid:!!p.paid?.ok};
     });
     const sumRebuys = sum(totals.map(t=>t.rebuys));
     const sumBuyins = sum(totals.map(t=>t.buyinsTotal));
-    const sumChips = sum(totals.map(t=>t.chips));
-    const sumNet = sum(totals.map(t=>t.net));
-    const sumNetMoney = sumNet * state.chipRate;
-    const diff = sumChips - sumBuyins;
+    const sumChips  = sum(totals.map(t=>t.chips));
+    const sumNet    = sum(totals.map(t=>t.net));
+    const sumNetMoney = sumNet*state.chipRate;
+    const paidCount = totals.filter(t=>t.paid).length;
 
-    $('sumRebuys').textContent = `${sumRebuys}`;
-    $('sumBuyins').textContent = `${fmtInt(sumBuyins)} Chips`;
-    $('sumChips').textContent = `${fmtInt(sumChips)} Chips`;
-    $('sumNet').textContent = (sumNet>0?'+':'') + fmtInt(sumNet) + ' Chips';
-    $('sumNet').className = 'badge ' + (sumNet===0?'':(sumNet>0?'ok':'bad'));
-    $('sumNetMoney').textContent = (sumNetMoney>0?'+':'') + fmtMoney(sumNetMoney);
-
-    $('statPlayers').textContent = state.players.length;
-    $('statChipsSoll').textContent = fmtInt(sumBuyins);
-    $('statChipsIst').textContent = fmtInt(sumChips);
-    $('statDiff').textContent = (diff>0?'+':'') + fmtInt(diff);
-    $('sumBuyins').className = 'badge ' + (diff===0?'ok':'bad');
-    $('sumChips').className = 'badge ' + (diff===0?'ok':'bad');
+    $('sumRebuys').textContent=`${sumRebuys}`;
+    $('sumBuyins').textContent=`${fmtInt(sumBuyins)} Chips`;
+    $('sumChips').textContent =`${fmtInt(sumChips)} Chips`;
+    $('sumNet').textContent   =(sumNet>0?'+':'')+fmtInt(sumNet)+' Chips';
+    $('sumNet').className='badge '+(sumNet===0?'':(sumNet>0?'ok':'bad'));
+    $('sumNetMoney').textContent=(sumNetMoney>0?'+':'')+fmtMoney(sumNetMoney);
+    paidCountEl.textContent = `${paidCount} / ${state.players.length} bezahlt`;
+    paidCountEl.className = 'badge ' + (paidCount===state.players.length && state.players.length>0 ? 'ok' : '');
   }
 
-  function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
-
-  function rowHtml(p, idx) {
-    const rebuys = clampInt(p.rebuys);
-    const buyinsTotal = (1 + rebuys) * state.buyinChips;
-    const chips = clampInt(p.chips, 0);
-    const netChips = chips - buyinsTotal;
-    const netMoney = netChips * state.chipRate;
-    const isMine = canEditRow(p.id);
+  function rowHtml(p, idx){
+    const rebuys=clampInt(p.rebuys); const buyinsTotal=(1+rebuys)*state.buyinChips; const chips=clampInt(p.chips,0);
+    const netChips = chips - buyinsTotal; const netMoney = netChips*state.chipRate;
+    const isMine = canEditRow(p.id); const locked=!!p.paid?.ok; const editable=(isMine||isAdminLike()) && !locked;
+    const statusLabel = p.paid?.ok ? `<span class="badge ok">✅ paid</span>` : `<span class="badge">open</span>`;
     return `
       <td class="muted small">${idx+1}</td>
-      <td class="name-cell">
-        <input data-k="name" value="${escapeHtml(p.name ?? '')}" placeholder="Name" ${isMine || canEditGlobal() ? '' : 'disabled'}>
-      </td>
-      <td class="right"><input data-k="rebuys" type="number" min="0" step="1" value="${rebuys}" ${isMine ? '' : (canEditGlobal()?'':'disabled')}></td>
+      <td class="name-cell"><input data-k="name" value="${(p.name||'')}" placeholder="Name" ${editable||isAdminLike()?'':'disabled'} ${locked?'disabled':''}></td>
+      <td class="right"><input data-k="rebuys" type="number" min="0" step="1" value="${rebuys}" ${editable?'':'disabled'}></td>
       <td class="right"><span class="muted" data-k="buyinsText">${fmtInt(buyinsTotal)} Chips</span></td>
-      <td class="right"><input data-k="chips" type="number" min="0" step="1" value="${chips}" ${isMine ? '' : (canEditGlobal()?'':'disabled')}></td>
+      <td class="right"><input data-k="chips" type="number" min="0" step="1" value="${chips}" ${editable?'':'disabled'}></td>
       <td class="right nowrap"><strong data-k="netChips" class="net-chips ${netChips===0?'':(netChips>0?'green':'red')}">${netChips>0?'+':''}${fmtInt(netChips)}</strong></td>
       <td class="right nowrap"><strong data-k="netMoney" class="net-money ${netMoney===0?'':(netMoney>0?'green':'red')}">${netMoney>0?'+':''}${fmtMoney(netMoney)}</strong></td>
-      <td class="right">
-        <span class="paid-flag">
-          <input type="checkbox" data-k="paid" ${p.paid?.ok ? 'checked' : ''} ${canConfirmPayment() ? '' : 'disabled'}>
-          <label class="small">${p.paid?.ok ? 'bestätigt' : 'offen'}</label>
-        </span>
-        <div class="small muted" data-k="paidMeta">${p.paid?.by ? `von ${p.paid.by} · ${new Date(p.paid.at).toLocaleString('de-DE')}`:''}</div>
+      <td class="center">
+        <label class="small">
+          <input type="checkbox" data-k="paid" ${p.paid?.ok?'checked':''} ${canConfirmPayment()? '': 'disabled'}>
+          ${statusLabel}
+        </label>
+        <div class="small muted" data-k="paidMeta">${p.paid?.by ? `by ${p.paid.by} · ${new Date(p.paid.at).toLocaleString('de-DE')}`:''}</div>
       </td>
       <td class="right">
         <div class="row-actions">
-          <button class="ghost small" data-action="rebuy" ${isMine || canEditGlobal() ? '' : 'disabled'}>+ Rebuy</button>
-          <button class="ghost small" data-action="delete" ${canEditGlobal() ? '' : 'disabled'}>Entfernen</button>
+          <button class="ghost small" data-action="rebuy" ${editable?'':'disabled'}>+ Rebuy</button>
+          <button class="ghost small" data-action="delete" ${isAdminLike()? '': 'disabled'}>Remove</button>
         </div>
-      </td>
-    `;
+      </td>`;
   }
 
-  function attachRowHandlers(tr, p) {
+  function attachRowHandlers(tr,p){
     const isMine = canEditRow(p.id);
-    const updateDerived = () => {
-      const rebuys = clampInt(p.rebuys);
-      const buyinsTotal = (1 + rebuys) * state.buyinChips;
-      const chips = clampInt(p.chips,0);
-      const netChips = chips - buyinsTotal;
-      const netMoney = netChips * state.chipRate;
-
-      const buyinsText = tr.querySelector('[data-k="buyinsText"]');
-      const netChipsEl = tr.querySelector('[data-k="netChips"]');
-      const netMoneyEl = tr.querySelector('[data-k="netMoney"]');
-      const paidMeta = tr.querySelector('[data-k="paidMeta"]');
-
-      if (buyinsText) buyinsText.textContent = `${fmtInt(buyinsTotal)} Chips`;
-      if (netChipsEl) { netChipsEl.textContent = `${netChips>0?'+':''}${fmtInt(netChips)}`; netChipsEl.className = `net-chips ${netChips===0?'':(netChips>0?'green':'red')}`; }
-      if (netMoneyEl) { netMoneyEl.textContent = `${netMoney>0?'+':''}${fmtMoney(netMoney)}`; netMoneyEl.className = `net-money ${netMoney===0?'':(netMoney>0?'green':'red')}`; }
-      if (paidMeta) paidMeta.textContent = p.paid?.by ? `von ${p.paid.by} · ${new Date(p.paid.at).toLocaleString('de-DE')}` : '';
+    const updateDerived=()=>{
+      const rebuys=clampInt(p.rebuys); const buyinsTotal=(1+rebuys)*state.buyinChips; const chips=clampInt(p.chips,0);
+      const netChips=chips-buyinsTotal; const netMoney=netChips*state.chipRate;
+      const buyinsText=tr.querySelector('[data-k="buyinsText"]'); const netChipsEl=tr.querySelector('[data-k="netChips"]'); const netMoneyEl=tr.querySelector('[data-k="netMoney"]'); const paidMeta=tr.querySelector('[data-k="paidMeta"]');
+      if (buyinsText) buyinsText.textContent=`${fmtInt(buyinsTotal)} Chips`;
+      if (netChipsEl){ netChipsEl.textContent=`${netChips>0?'+':''}${fmtInt(netChips)}`; netChipsEl.className=`net-chips ${netChips===0?'':(netChips>0?'green':'red')}`; }
+      if (netMoneyEl){ netMoneyEl.textContent=`${netMoney>0?'+':''}${fmtMoney(netMoney)}`; netMoneyEl.className=`net-money ${netMoney===0?'':(netMoney>0?'green':'red')}`; }
+      if (paidMeta) paidMeta.textContent = p.paid?.by ? `by ${p.paid.by} · ${new Date(p.paid.at).toLocaleString('de-DE')}` : '';
     };
-
     tr.querySelectorAll('input').forEach(inp=>{
-      inp.addEventListener('input', () => {
-        const k = inp.dataset.k;
-        if (k==='name') { if (!(isMine || canEditGlobal())) { inp.value = p.name||''; return; } p.name = inp.value; }
-        if (k==='rebuys') { if (!(isMine || canEditGlobal())) { inp.value = p.rebuys||0; return; } p.rebuys = clampInt(inp.value, 0); }
-        if (k==='chips') { if (!(isMine || canEditGlobal())) { inp.value = p.chips||0; return; } p.chips = clampInt(inp.value, 0); }
-        if (k==='paid')  { if (!canConfirmPayment()) { inp.checked = !!p.paid?.ok; return; } const ok = inp.checked; p.paid = ok ? { ok:true, by: state.role.kind==='admin'?'Admin':'Bank', at: Date.now() } : { ok:false }; }
-        save(); updateDerived(); computeTotals();
+      inp.addEventListener('input', ()=>{
+        const k=inp.dataset.k; const locked=!!p.paid?.ok;
+        if (locked && (k==='name'||k==='rebuys'||k==='chips')){ inp.value = k==='name'? p.name : (k==='rebuys'? p.rebuys : p.chips); return; }
+        if (k==='name'){ if (!(isMine||isAdminLike())){ inp.value=p.name||''; return; } p.name=inp.value; }
+        if (k==='rebuys'){ if (!(isMine||isAdminLike())){ inp.value=p.rebuys||0; return; } p.rebuys=clampInt(inp.value,0); }
+        if (k==='chips'){ if (!(isMine||isAdminLike())){ inp.value=p.chips||0; return; } p.chips=clampInt(inp.value,0); }
+        if (k==='paid'){ if (!canConfirmPayment()){ inp.checked=!!p.paid?.ok; return; } const ok=inp.checked; p.paid = ok? {ok:true,by:(state.role.kind==='admin'?'Admin':'Bank'),at:Date.now()} : {ok:false};
+          tr.querySelectorAll('input[data-k="name"],input[data-k="rebuys"],input[data-k="chips"]').forEach(i=> ok? i.setAttribute('disabled','') : i.removeAttribute('disabled'));
+        }
+        save(); updateDerived(); computeTotals(); updateFinishRoundState();
       });
-      inp.addEventListener('change', ()=>{ save(); updateDerived(); computeTotals(); });
+      inp.addEventListener('change', ()=>{ save(); updateDerived(); computeTotals(); updateFinishRoundState(); });
     });
-
-    const rebuyBtn = tr.querySelector('[data-action="rebuy"]');
+    const rebuyBtn=tr.querySelector('[data-action="rebuy"]');
     if (rebuyBtn) rebuyBtn.addEventListener('click', ()=>{
-      if (!(isMine || canEditGlobal())) return;
-      p.rebuys = clampInt((p.rebuys||0) + 1, 0);
-      const rebuysInput = tr.querySelector('input[data-k="rebuys"]'); if (rebuysInput) rebuysInput.value = p.rebuys;
-      save(); updateDerived(); computeTotals();
+      if (!!p.paid?.ok) return; if (!(isMine||isAdminLike())) return;
+      p.rebuys=clampInt((p.rebuys||0)+1,0); const re=tr.querySelector('input[data-k="rebuys"]'); if (re) re.value=p.rebuys;
+      save(); updateDerived(); computeTotals(); updateFinishRoundState();
     });
-
-    const delBtn = tr.querySelector('[data-action="delete"]');
+    const delBtn=tr.querySelector('[data-action="delete"]');
     if (delBtn) delBtn.addEventListener('click', ()=>{
-      if (!canEditGlobal()) return;
-      if (!confirm(`Spieler „${p.name||('#'+p.id)}“ entfernen?`)) return;
-      state.players = state.players.filter(x=>x.id!==p.id);
-      if (state.role.kind==='player' && state.role.playerId===p.id) state.role = {kind:'viewer', playerId:null};
+      if (!isAdminLike()) return; if (!confirm(`Spieler „${p.name||('#'+p.id)}“ entfernen?`)) return;
+      state.players = state.players.filter(x=>x.id!==p.id); if (state.role.kind==='player' && state.role.playerId===p.id) state.role={kind:'viewer',playerId:null};
       save(); renderAll();
     });
-
     updateDerived();
   }
 
-  function renderRows() {
-    rowsTbody.innerHTML = '';
-    state.players.forEach((p, idx) => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = rowHtml(p, idx);
-      rowsTbody.appendChild(tr);
-      attachRowHandlers(tr, p);
+  function renderRows(){
+    rowsTbody.innerHTML=''; state.players.forEach((p,idx)=>{ const tr=document.createElement('tr'); tr.innerHTML=rowHtml(p,idx); rowsTbody.appendChild(tr); attachRowHandlers(tr,p); });
+  }
+  function renderAll(){ renderHeaderAndTotals(); renderRows(); }
+
+  // ---------- Timeline & Stats ----------
+  function renderTimeline(){
+    timelineEl.innerHTML='';
+    let rounds=[...state.rounds].sort((a,b)=>b.date-a.date);
+    const filterVal = historyFilter.value||'';
+    if (filterVal){ const pid=Number(filterVal); rounds = rounds.map(r=>({ ...r, entries: r.entries.filter(e=>e.playerId===pid) })).filter(r=>r.entries.length>0); }
+    if (!rounds.length){ timelineEl.innerHTML=`<div class="muted small">Noch keine abgeschlossene Runde.</div>`; return; }
+    rounds.forEach(r=>{
+      const winners=[...r.entries].sort((a,b)=>b.netMoney-a.netMoney);
+      const top=winners[0], bottom=winners[winners.length-1];
+      const div=document.createElement('div'); div.className='round-item';
+      const totalsEuro = r.totals.netMoney.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});
+      div.innerHTML=`
+        <div class="line">
+          <div><strong>${r.name}</strong> <span class="muted small">(${new Date(r.date).toLocaleString('de-DE')})</span></div>
+          <div class="small muted">Buy-in: ${r.buyinChips} Chips · 1 Chip = ${r.chipRate.toFixed(2)} ${r.currency}</div>
+        </div>
+        <div class="line">
+          <div class="small">Spieler: <strong>${r.entries.length}</strong></div>
+          <div class="small">Summe Netto: <strong>${(r.totals.netChips>0?'+':'')}${fmtInt(r.totals.netChips)} Chips</strong> · <strong>${(r.totals.netMoney>0?'+':'')}${totalsEuro} ${r.currency}</strong></div>
+        </div>
+        <div class="small">Top: <strong>${top?.name||'-'}</strong> (${top?.netMoney>0?'+':''}${(top?.netMoney||0).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})} ${r.currency}) · Flop: <strong>${bottom?.name||'-'}</strong> (${bottom?.netMoney>0?'+':''}${(bottom?.netMoney||0).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})} ${r.currency})</div>`;
+      timelineEl.appendChild(div);
     });
   }
 
-  function renderAll() { renderHeaderAndStats(); renderRows(); }
+  function renderMyStats(){
+    if (state.role.kind!=='player'){ statsHint.style.display=''; myStatsWrap.style.display='none'; return; }
+    const me=getPlayerById(state.role.playerId); if (!me){ statsHint.style.display=''; myStatsWrap.style.display='none'; return; }
+    let reb=0,netC=0,netM=0,wins=0,losses=0;
+    for (const r of state.rounds){ const e=r.entries.find(x=>x.playerId===me.id); if(!e) continue; reb+=e.rebuys; netC+=e.netChips; netM+=e.netMoney; if(e.netMoney>0) wins++; else if(e.netMoney<0) losses++; }
+    sRebuys.textContent=fmtInt(reb); sNetChips.textContent=(netC>0?'+':'')+fmtInt(netC);
+    sNetMoney.textContent=((netM>0?'+':'')+netM.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})+' '+state.currency);
+    sWins.textContent=wins; sLosses.textContent=losses;
+    statsHint.style.display='none'; myStatsWrap.style.display='';
+  }
 
-  // --- Role/Login handling ---
-  function ensurePins() { if (state.pins.admin===null) state.pins.admin = ''; if (state.pins.bank===null) state.pins.bank = ''; }
+  function fillHistoryFilter(){
+    const prev=historyFilter.value||'';
+    historyFilter.innerHTML='<option value="">— alle Spieler —</option>'+state.players.map(p=>`<option value="${p.id}">${p.name||('ID '+p.id)}</option>`).join('');
+    historyFilter.value=prev;
+  }
 
-  roleSelect.addEventListener('change', renderHeaderAndStats);
+  // ---------- Finish Round ----------
+  const everyonePaid = ()=> state.players.length>0 && state.players.every(p=>p.paid?.ok);
+  function updateFinishRoundState(){ finishRoundBtn.disabled = !isAdminLike() || !everyonePaid(); finishRoundBtn.classList.toggle('lock', finishRoundBtn.disabled); }
+  function shuffleQuotes(){ buildQuotes(); } // re-mix ticker
+  function finalizeRound(){
+    if (!everyonePaid()){ alert('Noch nicht alle bezahlt.'); return; }
+    const name=(roundNameEl.value||`${todayStr()} Homegame`).trim();
+    const entries=state.players.map(p=>{
+      const rebuys=clampInt(p.rebuys), chips=clampInt(p.chips,0), buyinsTotal=(1+rebuys)*state.buyinChips, netChips=chips-buyinsTotal, netMoney=netChips*state.chipRate;
+      return {playerId:p.id,name:p.name||('#'+p.id),rebuys,chips,netChips,netMoney};
+    });
+    const totals={rebuys:sum(entries.map(e=>e.rebuys)),buyins:sum(entries.map(e=>(1+e.rebuys)*state.buyinChips)),chips:sum(entries.map(e=>e.chips)),netChips:sum(entries.map(e=>e.netChips)),netMoney:sum(entries.map(e=>e.netMoney))};
+    state.rounds.push({id:nextId(state.rounds),name,date:Date.now(),buyinChips:state.buyinChips,chipRate:state.chipRate,currency:state.currency,entries,totals});
+    state.players.forEach(p=>{ p.paid={ok:false}; p.rebuys=0; p.chips=0; });
+    state.roundName = `${todayStr()} Homegame`;
+    save(); renderAll(); shuffleQuotes(); alert('✅ Runde gespeichert und zurückgesetzt. Quotes neu gemischt.');
+  }
 
-  loginBtn.addEventListener('click', async ()=>{
-    const sel = roleSelect.value;
-    if (sel==='viewer') { state.role = {kind:'viewer', playerId:null}; save(); renderAll(); return; }
-    if (sel==='player') {
-      const name = (playerLoginName.value||'').trim();
-      const pass = playerLoginPass.value||'';
-      if (!name || !pass) { alert('Bitte Name und Passwort eingeben.'); return; }
+  // ---------- Role & Login / Register ----------
+  async function doRegister(role, name, pass){
+    if (role==='player'){
+      if(!name || !pass){ alert('Bitte Name & Passwort angeben.'); return; }
+      if (getPlayerByName(name)?.ph){ alert('Spieler existiert bereits. Bitte anderen Namen wählen.'); return; }
+      const p = getPlayerByName(name) || { id: nextId(state.players), name, rebuys:0, chips:0, paid:{ok:false}, ph:null, createdAt: Date.now() };
+      p.ph = await sha256(pass);
+      if (!getPlayerByName(name)) state.players.push(p);
+      save(); renderAll(); alert(`Registriert: Spieler „${name}“.`);
+    } else if (role==='admin' || role==='bank'){
+      if(!pass){ alert('Bitte eine PIN setzen.'); return; }
+      state.pins[role==='admin'?'admin':'bank'] = pass;
+      save(); alert(`${role}-PIN gesetzt.`);
+    } else {
+      alert('Viewer benötigt keine Registrierung.');
+    }
+  }
+  async function doLogin(role, name, pass){
+    if (role==='viewer'){ state.role={kind:'viewer',playerId:null}; save(); renderAll(); return true; }
+    if (role==='player'){
+      if (!name || !pass){ alert('Bitte Name & Passwort angeben.'); return false; }
+      const p = getPlayerByName(name);
+      if (!p){ alert('Unbekannter Spieler. Bitte registrieren.'); return false; }
       const hash = await sha256(pass);
-      let p = getPlayerByName(name);
-      if (!p) { const id = nextId(); p = { id, name, rebuys:0, chips:0, paid:{ok:false}, ph: hash, createdAt: Date.now() }; state.players.push(p); alert(`Konto angelegt für „${name}“.`); }
-      else { if (p.ph && p.ph !== hash) { alert('Falsches Passwort.'); return; } if (!p.ph) { p.ph = hash; alert('Passwort gesetzt.'); } }
-      state.role = {kind:'player', playerId: p.id}; save(); renderAll(); playerLoginPass.value=''; return;
+      if (p.ph && p.ph!==hash){ alert('Falsches Passwort.'); return false; }
+      if (!p.ph){ p.ph = hash; }
+      state.role={kind:'player',playerId:p.id}; save(); renderAll(); return true;
     }
-    if (sel==='admin' || sel==='bank') {
-      ensurePins(); const pin = (pinInput.value || ''); const target = sel==='admin' ? 'admin' : 'bank';
-      if (!state.pins[target]) { if (!pin) { alert(`Erster Login als ${sel}: Wähle eine PIN und gib sie ein.`); return; } if (!confirm(`${sel}-PIN setzen?`)) return; state.pins[target] = pin; alert(`${sel}-PIN gesetzt.`); }
-      else if (state.pins[target] !== pin) { alert('Falsche PIN.'); return; }
-      state.role = {kind: sel, playerId: null}; pinInput.value=''; save(); renderAll();
+    if (role==='admin' || role==='bank'){
+      if (!pass){ alert('Bitte PIN eingeben.'); return false; }
+      const key=(role==='admin'?'admin':'bank');
+      if (!state.pins[key]){ alert(`Keine ${role}-PIN gesetzt. Bitte zuerst registrieren.`); return false; }
+      if (state.pins[key] !== pass){ alert('Falsche PIN.'); return false; }
+      state.role={kind:role,playerId:null}; save(); renderAll(); return true;
     }
+  }
+
+  // Header Login/Register + Enter Key
+  function bindEnterToLogin(inputs, handler){
+    inputs.forEach(el=> el.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); handler(); }}));
+  }
+  registerBtn.addEventListener('click', async ()=>{
+    const role=roleSelect.value;
+    const name=(playerLoginName.value||'').trim();
+    const pass=playerLoginPass.value||'';
+    await doRegister(role, name, pass);
+  });
+  async function headerLoginHandler(){
+    const role=roleSelect.value;
+    const name=(playerLoginName.value||'').trim();
+    const pass=playerLoginPass.value||'';
+    const ok = await doLogin(role, name, pass);
+    if (ok) { const ss=$('startscreen'); if (!ss.hidden) ss.hidden=true; }
+  }
+  loginBtn.addEventListener('click', headerLoginHandler);
+  bindEnterToLogin([roleSelect, playerLoginName, playerLoginPass], headerLoginHandler);
+  logoutBtn.addEventListener('click', ()=>{ state.role={kind:'viewer',playerId:null}; save(); renderAll(); });
+
+  // ---------- Inputs & Buttons ----------
+  buyinEl.addEventListener('change', ()=>{ if(!isAdminLike()){ buyinEl.value=state.buyinChips; return; } state.buyinChips=Math.max(1,Math.floor(Number(buyinEl.value)||100)); save(); renderRows(); computeTotals(); });
+  chipRateEl.addEventListener('change', ()=>{ if(!isAdminLike()){ chipRateEl.value=state.chipRate; return; } const v=Number(chipRateEl.value); state.chipRate=isNaN(v)||v<0?0:v; save(); renderRows(); computeTotals(); });
+  currencyEl.addEventListener('change', ()=>{ if(!isAdminLike()){ currencyEl.value=state.currency; return; } state.currency=currencyEl.value||'€'; save(); renderRows(); computeTotals(); });
+  roundNameEl.addEventListener('input', ()=>{ if(!isAdminLike()) return; state.roundName=roundNameEl.value; save(); });
+  finishRoundBtn.addEventListener('click', ()=>{ if(!isAdminLike()) return; finalizeRound(); });
+
+  addPlayerBtn.addEventListener('click', ()=>{
+    if(!isAdminLike()){ alert('Nur Admin/Bank kann Spieler hinzufügen.'); return; }
+    const name=(playerNameEl.value||'').trim(); const id=nextId(state.players);
+    state.players.push({id,name,rebuys:0,chips:0,paid:{ok:false},ph:null,createdAt:Date.now()}); playerNameEl.value=''; save(); renderAll();
   });
 
-  logoutBtn.addEventListener('click', ()=>{ state.role = {kind:'viewer', playerId:null}; save(); renderAll(); });
-
-  // --- Global inputs ---
-  buyinEl.addEventListener('change', ()=>{ if (!canEditGlobal()) { buyinEl.value = state.buyinChips; return; } state.buyinChips = Math.max(1, Math.floor(Number(buyinEl.value)||100)); save(); renderRows(); computeTotals(); });
-  chipRateEl.addEventListener('change', ()=>{ if (!canEditGlobal()) { chipRateEl.value = state.chipRate; return; } const v = Number(chipRateEl.value); state.chipRate = isNaN(v) || v<0 ? 0 : v; save(); renderRows(); computeTotals(); });
-  currencyEl.addEventListener('change', ()=>{ if (!canEditGlobal()) { currencyEl.value = state.currency; return; } state.currency = currencyEl.value || '€'; save(); renderRows(); computeTotals(); });
-
-  // --- Buttons ---
-  $('addPlayer').addEventListener('click', ()=>{
-    if (!canEditGlobal()) { alert('Nur Admin kann Spieler hinzufügen.'); return; }
-    const name = (playerNameEl.value || '').trim();
-    const id = nextId();
-    state.players.push({ id, name, rebuys:0, chips:0, paid:{ ok:false }, ph: null, createdAt: Date.now() });
-    playerNameEl.value = ''; save(); renderAll();
-  });
-
-  $('validate').addEventListener('click', ()=>{
-    const totals = state.players.map(p => ({ buyinsTotal: (1 + clampInt(p.rebuys)) * state.buyinChips, chips: clampInt(p.chips,0) }));
-    const sumBuyins = sum(totals.map(t=>t.buyinsTotal)), sumChips = sum(totals.map(t=>t.chips)), diff = sumChips - sumBuyins;
-    if (diff === 0) alert('✅ Konsistenzcheck: OK – Summe Chips = Summe Buy-ins.');
-    else alert(`⚠️ Abweichung: ${(diff>0?'+':'')}${diff} Chips. Prüft bitte die Eingaben (Chips oder Rebuys).`);
+  validateBtn.addEventListener('click', ()=>{
+    const sumBuyins=sum(state.players.map(p=>(1+clampInt(p.rebuys))*state.buyinChips)), sumChips=sum(state.players.map(p=>clampInt(p.chips,0))), diff=sumChips-sumBuyins;
+    if (diff===0) alert('✅ Konsistenz: Summe Chips = Summe Buy-ins.'); else alert(`⚠️ Abweichung: ${(diff>0?'+':'')}${diff} Chips.`);
   });
 
   exportBtn.addEventListener('click', ()=>{
-    const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
-    const url = URL.createObjectURL(blob); const a = document.createElement('a'); const stamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
-    a.href = url; a.download = `poker-ledger-${stamp}.json`; a.click(); URL.revokeObjectURL(url);
+    const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); const stamp=new Date().toISOString().slice(0,19).replace(/[:T]/g,'-'); a.href=url; a.download=`poker-ledger-v2-${stamp}.json`; a.click(); URL.revokeObjectURL(url);
   });
-
-  importBtn.addEventListener('click', ()=> importFile.click());
+  importBtn.addEventListener('click', ()=>importFile.click());
   importFile.addEventListener('change', async (e)=>{
-    const file = e.target.files?.[0]; if (!file) return;
-    const text = await file.text();
+    const file=e.target.files?.[0]; if(!file) return; const text=await file.text();
     try{
-      const data = JSON.parse(text);
-      if (!data || typeof data!=='object') throw new Error('Ungültige Datei');
-      const clamp = (x)=>Math.max(1, Math.floor(Number(x)||100));
-      state.buyinChips = clamp(data.buyinChips);
-      state.chipRate = Number(data.chipRate) >= 0 ? Number(data.chipRate) : 1;
-      state.currency = data.currency || '€';
-      state.players = Array.isArray(data.players) ? data.players.map(p=>({
-        id: Number(p.id)||nextId(), name: (p.name||'').toString(), rebuys: clampInt(p.rebuys,0), chips: clampInt(p.chips,0),
-        paid: p.paid && typeof p.paid==='object' ? { ok: !!p.paid.ok, by: p.paid.by||'', at: p.paid.at||Date.now() } : { ok:false },
-        ph: p.ph || null, createdAt: p.createdAt || Date.now()
-      })) : [];
-      state.pins = data.pins && typeof data.pins==='object' ? data.pins : state.pins;
-      state.role = {kind:'viewer', playerId:null};
-      save(); renderAll();
-    }catch(err){ alert('Import fehlgeschlagen: ' + err.message); }
-    finally { e.target.value=''; }
+      const data=JSON.parse(text); if(!data||typeof data!=='object') throw new Error('Ungültige Datei');
+      state.buyinChips=Math.max(1,Math.floor(Number(data.buyinChips)||100)); state.chipRate=(data.chipRate===0||data.chipRate)?Number(data.chipRate):0.05; state.currency=data.currency||'€'; state.roundName=data.roundName||'';
+      state.players=Array.isArray(data.players)?data.players.map(p=>({id:Number(p.id)||nextId(state.players),name:(p.name||'').toString(),rebuys:clampInt(p.rebuys,0),chips:clampInt(p.chips,0),paid:p.paid&&typeof p.paid==='object'?{ok:!!p.paid.ok,by:p.paid.by||'',at:p.paid.at||Date.now()}:{ok:false},ph:p.ph||null,createdAt:p.createdAt||Date.now()})):[];
+      state.rounds=Array.isArray(data.rounds)?data.rounds:[]; state.pins=data.pins&&typeof data.pins==='object'?data.pins:state.pins; state.role={kind:'viewer',playerId:null}; save(); renderAll();
+    }catch(err){ alert('Import fehlgeschlagen: '+err.message); } finally{ e.target.value=''; }
   });
 
+  // Delete all: needs Admin + Bank PINs
   resetBtn.addEventListener('click', ()=>{
-    if (!canEditGlobal()) { alert('Nur Admin kann alles löschen.'); return; }
-    if (!confirm('Wirklich alles löschen (Spieler, Einstellungen, PINs)?')) return;
-    localStorage.removeItem('poker-ledger-roles');
-    state.buyinChips = 100; state.chipRate = 1; state.currency = '€'; state.players = []; state.role = {kind:'viewer', playerId:null}; state.pins = {admin:null, bank:null};
-    save(); renderAll();
+    if(!isAdminLike()){ alert('Nur Admin oder Bank kann das anstoßen.'); return; }
+    if(!confirm('Sicher? Zum Löschen müssen Admin- und Bank-PIN bestätigt werden.')) return;
+    if(!state.pins.admin || !state.pins.bank){ alert('Bitte zuerst beide PINs setzen (Registrieren/Anmelden).'); return; }
+    const a=prompt('Admin-PIN:'); if(a!==state.pins.admin){ alert('Admin-PIN falsch.'); return; }
+    const b=prompt('Bank-PIN:'); if(b!==state.pins.bank){ alert('Bank-PIN falsch.'); return; }
+    if(!confirm('Letzte Bestätigung: Wirklich ALLES löschen (Spieler, Timeline, Einstellungen, PINs)?')) return;
+    localStorage.removeItem('poker-ledger-v2');
+    state.buyinChips=100; state.chipRate=0.05; state.currency='€'; state.roundName=''; state.players=[]; state.rounds=[]; state.role={kind:'viewer',playerId:null}; state.pins={admin:null,bank:null};
+    save(); renderAll(); alert('✅ Alles wurde gelöscht.');
   });
 
-  // Init
-  load();
-  if (state.players.length === 0) {
-    state.players.push({ id:1, name:'Spieler A', rebuys:0, chips:80,  paid:{ok:false}, ph:null, createdAt:Date.now() });
-    state.players.push({ id:2, name:'Spieler B', rebuys:0, chips:120, paid:{ok:false}, ph:null, createdAt:Date.now() });
+  // ---------- Startscreen ----------
+  const ss=$('startscreen'), startBg=$('startBg'), enterBtn=$('enterBtn');
+  const startRole=$('startRole'), startName=$('startName'), startPass=$('startPass'), startLogin=$('startLogin'), startRegister=$('startRegister');
+
+  function showStart(){ ss.hidden=false; }
+  function hideStart(){ ss.hidden=true; }
+
+  // Unsplash Hintergrund auf Startscreen
+  function applyStartBg(){
+    const url = "https://images.unsplash.com/photo-1541849548-216549ae2160?auto=format&fit=crop&w=1920&q=80";
+    startBg.style.backgroundImage = `url('${url}')`;
   }
-  renderAll();
+
+  // Startscreen Buttons
+  enterBtn.addEventListener('click', hideStart);
+  startRegister.addEventListener('click', async ()=>{
+    const role=startRole.value, nm=(startName.value||'').trim(), pw=startPass.value||'';
+    await doRegister(role, nm, pw);
+  });
+  async function startLoginHandler(){
+    const role=startRole.value, nm=(startName.value||'').trim(), pw=startPass.value||'';
+    const ok = await doLogin(role, nm, pw);
+    if (ok) hideStart();
+  }
+  startLogin.addEventListener('click', startLoginHandler);
+  [startRole,startName,startPass].forEach(el=>el.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); startLoginHandler(); }}));
+
+  // ---------- Quotes ----------
+  const authors = [
+    "S. Harvey","Steve Harvey","Stephan Harvey","Steve H.","Stephan H.","Stephan \"Steve\" Harvey",
+    "The Host from Familiy Feud","A dedicated game show host","Steve the Gambling Man",
+    "A man with a very prominent mustache","S. H.","Steve (not from Minecraft)"
+  ];
+  const quotes = [
+    "Give me six hours to chop down a tree, and I will spend the first four at the blackjack table.",
+    "A journey of a thousand miles begins with a single chip.",
+    "Fortune favors the bold… and the guy who bluffs with 7-2 offsuit.",
+    "The early bird catches the worm, but the second mouse gets the jackpot.",
+    "What doesn’t kill you makes you double down.",
+    "When life gives you lemons, bet them on red.",
+    "You miss 100% of the shots you don’t take… and 100% of the hands you fold.",
+    "Winners never quit, quitters cash out too early.",
+    "Don’t count your chickens before they hatch – count your chips before the dealer sees them.",
+    "The pen is mightier than the sword, but the ace of spades beats them both.",
+    "If at first you don’t succeed, try re-buying.",
+    "Work smart, not hard – or just find a lucky slot machine.",
+    "Rome wasn’t built in a day, but my bankroll disappeared in one night.",
+    "Great minds think alike, but gamblers think the deck is rigged.",
+    "The best way to predict the future is to bet on it.",
+    "Slow and steady wins the race – unless there’s a time limit on the poker clock.",
+    "Luck is what happens when preparation meets opportunity… at the roulette table.",
+    "It’s not whether you win or lose, it’s how many free drinks you get.",
+    "Success is 1% inspiration, 99% trying to get your chips back.",
+    "Hard work beats talent, unless talent hits a royal flush.",
+    "If opportunity doesn’t knock, build a casino.",
+    "A goal without a plan is just a wish – and a poker hand without chips is just a dream.",
+    "Don’t watch the clock, watch the dealer.",
+    "Hustle in silence, let your chips make the noise.",
+    "If you’re going through hell, double down.",
+    "Shoot for the moon. Even if you miss, you’ll land in the high-roller lounge.",
+    "Don’t be afraid to give up the good to chase the jackpot.",
+    "Discipline is choosing between what you want now and what you want most – unless there’s a hot table.",
+    "If I had four hours to cut down a tree, I’d spend the first three at the craps table.",
+    "Gamble like there’s no tomorrow… because after this hand, there might not be."
+  ];
+  function buildQuotes(){
+    const shuffled = quotes.map(q=>({q,r:Math.random()})).sort((a,b)=>a.r-b.r).map(x=>x.q);
+    quotesTrack.innerHTML='';
+    for (let k=0;k<2;k++){
+      shuffled.forEach(q=>{
+        const a = authors[Math.floor(Math.random()*authors.length)];
+        const span=document.createElement('span'); span.className='quote'; span.innerHTML=`“${q}” <span class="author">— ${a}</span>`;
+        quotesTrack.appendChild(span);
+      });
+    }
+  }
+
+  // ---------- INIT ----------
+  load();
+  seedDefaultsIfMissing().then(()=>{
+    if (!state.roundName) state.roundName = `${todayStr()} Homegame`;
+    if (state.players.length===0){
+      state.players.push({ id:1, name:'Player A', rebuys:0, chips:80,  paid:{ok:false}, ph:null, createdAt:Date.now() });
+      state.players.push({ id:2, name:'Player B', rebuys:0, chips:120, paid:{ok:false}, ph:null, createdAt:Date.now() });
+    }
+    applyBackground();
+    applyStartBg();
+    renderAll();
+    buildQuotes();
+    showStart(); // Startscreen sichtbar – Login/Enter schließen ihn
+  });
+
+  // History filter
+  historyFilter.addEventListener('change', renderTimeline);
+  clearFilter.addEventListener('click', ()=>{ historyFilter.value=''; renderTimeline(); });
+
+  // Alles löschen: Admin + Bank PIN
+  const resetBtn=$('resetBtn');
+  resetBtn.addEventListener('click', ()=>{
+    if(!isAdminLike()){ alert('Nur Admin oder Bank kann das anstoßen.'); return; }
+    if(!confirm('Sicher? Zum Löschen müssen Admin- und Bank-PIN bestätigt werden.')) return;
+    if(!state.pins.admin || !state.pins.bank){ alert('Bitte zuerst beide PINs setzen (Registrieren/Anmelden).'); return; }
+    const a=prompt('Admin-PIN:'); if(a!==state.pins.admin){ alert('Admin-PIN falsch.'); return; }
+    const b=prompt('Bank-PIN:'); if(b!==state.pins.bank){ alert('Bank-PIN falsch.'); return; }
+    if(!confirm('Letzte Bestätigung: Wirklich ALLES löschen (Spieler, Timeline, Einstellungen, PINs)?')) return;
+    localStorage.removeItem('poker-ledger-v2');
+    state.buyinChips=100; state.chipRate=0.05; state.currency='€'; state.roundName=''; state.players=[]; state.rounds=[]; state.role={kind:'viewer',playerId:null}; state.pins={admin:null,bank:null};
+    save(); renderAll(); alert('✅ Alles wurde gelöscht.');
+  });
+
 })();
 </script>
 </body>
